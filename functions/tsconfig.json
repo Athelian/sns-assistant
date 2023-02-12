@@ -1,13 +1,5 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "outDir": "lib",
-    "sourceMap": true,
-    "strict": true,
-    "target": "ESNext"
-  },
+  "extends": "@tsconfig/node-lts/tsconfig.json",
   "compileOnSave": true,
   "include": [
     "src"
