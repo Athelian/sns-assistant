@@ -6,5 +6,5 @@ extends: standard-with-typescript
 overrides: []
 parserOptions:
   ecmaVersion: latest
-  project: tsconfig.json
+  project: functions/tsconfig.json
 rules: {}
