@@ -18,8 +18,7 @@ const twitterClient = new TwitterApi({
 
 const callbackURL = 'http://127.0.0.1:5000/????/????/callback'
 const configuration = new Configuration({
-  organization: 'YOUR_OPENAI_ORG',
-  apiKey: 'YOUR_OPENAI_SECRET'
+  apiKey: process.env.OPENAI_API_KEY,
 })
 const openai = new OpenAIApi(configuration)
 
