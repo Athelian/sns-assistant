@@ -6,4 +6,4 @@ extends: [standard-with-typescript, prettier]
 overrides: []
 parserOptions:
   ecmaVersion: latest
-  project: functions/tsconfig.json
+  project: tsconfig.json
