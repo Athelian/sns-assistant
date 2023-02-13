@@ -13,7 +13,7 @@ const dbRef = admin.firestore().doc('tokens/demo')
 
 const twitterClient = new TwitterApi({
   clientId: 'YOUR_CLIENT_ID',
-  clientSecret: 'YOUR_CLIENT_SECRET'
+  clientSecret: 'YOUR_CLIENT_SECRET',
 })
 
 const callbackURL = 'http://127.0.0.1:5000/????/????/callback'
@@ -27,7 +27,9 @@ const openai = new OpenAIApi(configuration)
 exports.auth = https.onRequest(async (_, resp) => {
   const { url, codeVerifier, state } = twitterClient.generateOAuth2AuthLink(
     callbackURL,
-    { scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'] }
+    {
+      scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
+    }
   )
 
   // store verifier
@@ -61,11 +63,11 @@ exports.callback = https.onRequest(async (req, resp) => {
   const {
     client: loggedClient,
     accessToken,
-    refreshToken
+    refreshToken,
   } = await twitterClient.loginWithOAuth2({
     code,
     codeVerifier,
-    redirectUri: callbackURL
+    redirectUri: callbackURL,
   })
 
   await dbRef.set({ accessToken, refreshToken })
@@ -89,15 +91,18 @@ exports.tweet = https.onRequest(async (_, resp) => {
   const {
     client: refreshedClient,
     accessToken,
-    refreshToken: newRefreshToken
+    refreshToken: newRefreshToken,
   } = await twitterClient.refreshOAuth2Token(refreshToken)
 
-  await dbRef.set({ accessToken, refreshToken: newRefreshToken })
+  await dbRef.set({
+    accessToken,
+    refreshToken: newRefreshToken,
+  })
 
   const nextTweetGeneration = await openai.createCompletion({
     model: 'text-davinci-003',
     prompt: 'tweet something cool for #techtwitter',
-    max_tokens: 64
+    max_tokens: 64,
   })
 
   const nextTweet = nextTweetGeneration.data.choices[0].text
@@ -107,9 +112,7 @@ exports.tweet = https.onRequest(async (_, resp) => {
     return
   }
 
-  const { data } = await refreshedClient.v2.tweet(
-    nextTweet
-  )
+  const { data } = await refreshedClient.v2.tweet(nextTweet)
 
   resp.send(data)
 })
