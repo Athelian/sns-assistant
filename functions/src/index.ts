@@ -45,7 +45,7 @@ exports.callback = https.onRequest(async (req, resp) => {
     return
   }
 
-  const snapshotData = await (await dbRef.get()).data()
+  const snapshotData = (await dbRef.get()).data()
 
   if (snapshotData === undefined) {
     resp.status(400).send('Failed to get snapshot data')
@@ -77,7 +77,7 @@ exports.callback = https.onRequest(async (req, resp) => {
 
 // STEP 3 - Refresh tokens and post tweets
 exports.tweet = https.onRequest(async (_, resp) => {
-  const snapshotData = await (await dbRef.get()).data()
+  const snapshotData = (await dbRef.get()).data()
 
   if (snapshotData === undefined) {
     resp.status(400).send('Failed to get snapshot data')
