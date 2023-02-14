@@ -10,13 +10,12 @@ admin.initializeApp()
 const dbRef = admin.firestore().doc('tokens/demo')
 
 // Twitter API init
-
 const twitterClient = new TwitterApi({
   clientId: 'YOUR_CLIENT_ID',
   clientSecret: 'YOUR_CLIENT_SECRET',
 })
 
-const callbackURL = 'http://127.0.0.1:5000/????/????/callback'
+const callbackURL = 'http://127.0.0.1:5000/sns-assistant/us-central1/auth'
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 })
