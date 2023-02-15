@@ -31,7 +31,10 @@ exports.auth = https.onRequest(async (_, resp) => {
   )
 
   // store verifier
-  await dbRef.set({ codeVerifier, state })
+  await dbRef.set({
+    codeVerifier,
+    state,
+  })
 
   resp.redirect(url)
 })
@@ -68,7 +71,10 @@ exports.callback = https.onRequest(async (req, resp) => {
     redirectUri: callbackURL,
   })
 
-  await dbRef.set({ accessToken, refreshToken })
+  await dbRef.set({
+    accessToken,
+    refreshToken,
+  })
 
   const { data } = await loggedClient.v2.me() // start using the client if you want
 
