@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { Cabin } from '@next/font/google'
 import styles from './page.module.sass'
+import Section from '@/components/section'
 
 const inter = Cabin({ subsets: ['latin'] })
 
@@ -11,21 +12,22 @@ export default function Home() {
         <Image
           src="/snai-high-resolution-logo-color-on-transparent-background.png"
           alt="snai logo"
-          width={200}
-          height={64.6}
+          width={400}
+          height={129.2}
           priority
         />
-        <div>A revolution in social media networking.</div>
+        <div className={styles.subtitle}>
+          A revolution in social media networking.
+        </div>
       </section>
-      <section className={styles.content}>
-        <ul>
-          <li>
-            Turbocharge your social media presence with artificial intelligence
-          </li>
-          <li>Automate your engagement with online audiences</li>
-          <li>Generate advertisements for new products</li>
-        </ul>
-      </section>
+      <Section
+        header={
+          'Turbocharge your social media presence with artificial intelligence'
+        }
+        body={
+          'Integrate world class machine learning with your business platform to manage your social media presence. By using SNAI, you are leading the way in the new world of automated marketing'
+        }
+      />
     </main>
   )
 }
