@@ -6,5 +6,8 @@
   "editor.formatOnSaveMode": "file",
   "eslint.workingDirectories": [".", "functions"],
   "typescript.tsdk": "node_modules/.pnpm/typescript@4.9.5/node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "[sass]": {
+    "editor.defaultFormatter": "syler.sass-indented"
+  }
 }
