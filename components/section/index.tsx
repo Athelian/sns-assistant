@@ -1,27 +1,32 @@
+import classNames from 'classnames'
 import styles from './index.module.sass'
 
 export default function Section({
+  variant,
   header,
   body,
 }: {
+  variant: 'light' | 'dark'
   header: string
   body: string
 }) {
   return (
     <section className={styles.container}>
-      <div className={styles.background} />
-      <div className={styles.textContainer}>
+      <div
+        className={classNames(
+          styles.textContainer,
+          styles[`textContainer--${variant}`]
+        )}
+      >
         <div className={styles.header}>{header}...</div>
         <div className={styles.body}>{body}</div>
       </div>
+      <div
+        className={classNames(
+          styles.background,
+          styles[`background--${variant}`]
+        )}
+      />
     </section>
   )
 }
-
-/**
- * <li>
-          Turbocharge your social media presence with artificial intelligence
-        </li>
-        <li>Automate your engagement with online audiences</li>
-        <li>Generate advertisements for new products</li>
- */

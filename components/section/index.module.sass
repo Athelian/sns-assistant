@@ -1,28 +1,36 @@
 .container
   display: flex
   justify-content: center
+  align-items: center
   position: relative
-  padding: 0 8vmin
+  min-height: 360px
 
 .background
   position: absolute
   top: -2rem
   bottom: -2rem
   width: 100vw
-  background-color: #bf528c
-  left: -16vmin
-  z-index: -1
+  left: -8vmin
+  &--light
+    background-color: white
 
 .textContainer
-  max-width: 1200px
-  color: white
-  font-weight: bold
+  height: fit-content
+  position: relative
+  max-width: 980px
+  z-index: 2
   &:first-letter
     text-transform: uppercase
     font-weight: bolder
     font-size: 128px
+    margin-right: 8px
+  &--light
+    &:first-letter
+      color: #6339a5
+  &--dark
     color: white
+    &:first-letter
+      color: #EF86C1
 
-.header
+.header, .body
   margin-bottom: 1rem
-  min-width: max-content
