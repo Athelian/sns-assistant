@@ -18,15 +18,10 @@ export default function Section({
           styles[`textContainer--${variant}`]
         )}
       >
-        <div className={styles.header}>{header}...</div>
+        <div className={styles.header}>{header}</div>
         <div className={styles.body}>{body}</div>
       </div>
-      <div
-        className={classNames(
-          styles.background,
-          styles[`background--${variant}`]
-        )}
-      />
+      <div className={styles.background} />
     </section>
   )
 }

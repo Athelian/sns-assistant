@@ -2,22 +2,12 @@
   display: flex
   justify-content: center
   align-items: center
-  position: relative
   min-height: 360px
-
-.background
-  position: absolute
-  top: -2rem
-  bottom: -2rem
-  width: 100vw
-  left: -8vmin
-  &--light
-    background-color: white
 
 .textContainer
   height: fit-content
-  position: relative
   max-width: 980px
+  padding: 0 36px
   z-index: 2
   &:first-letter
     text-transform: uppercase
@@ -26,9 +16,7 @@
     margin-right: 8px
   &--light
     &:first-letter
-      color: #6339a5
   &--dark
-    color: white
     &:first-letter
       color: #EF86C1
 
