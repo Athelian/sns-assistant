@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { Cabin } from '@next/font/google'
 import styles from './page.module.sass'
 import Section from '@/components/section'
@@ -11,16 +12,22 @@ export default function Home() {
     <main className={classNames(inter.className, styles.main)}>
       <header className={styles.banner}>
         <div>
-          <Image
-            src="/snai-high-resolution-logo-color-on-transparent-background.png"
-            alt="snai logo"
-            width={400}
-            height={129.2}
-            priority
-          />
-          <div className={styles.subtitle}>
-            A revolution in social media networking
+          <div>
+            <Image
+              src="/snai-high-resolution-logo-color-on-transparent-background.png"
+              alt="snai logo"
+              width={400}
+              height={129.2}
+              priority
+            />
+            <div className={styles.subtitle}>
+              A revolution in social media networking
+            </div>
           </div>
+          <nav className={styles.navbar}>
+            <Link href="/login">Log In</Link>
+            <Link href="/reg">Sign Up</Link>
+          </nav>
         </div>
         <div className={styles.slogan}>Install a new marketing team.</div>
       </header>
