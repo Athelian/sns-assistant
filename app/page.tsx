@@ -1,15 +1,11 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { Cabin } from '@next/font/google'
 import styles from './page.module.sass'
 import Section from '@/components/section'
-import classNames from 'classnames'
-
-const inter = Cabin({ subsets: ['latin'] })
+import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Home() {
   return (
-    <main className={classNames(inter.className, styles.main)}>
+    <>
       <header className={styles.banner}>
         <div>
           <div>
@@ -56,10 +52,6 @@ export default function Home() {
           )
         })}
       </section>
-      <footer className={styles.footer}>
-        <span>Created by Eliot Austin-Forbes</span>
-        <span>© 2023 Snai, All rights reserved.</span>
-      </footer>
-    </main>
+    </>
   )
 }
