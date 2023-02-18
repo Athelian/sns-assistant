@@ -1,5 +1,6 @@
 'use client'
 import Section from '@/components/section'
+import '@fortawesome/fontawesome-free/css/brands.css'
 
 import { StyledSection } from './styles'
 
