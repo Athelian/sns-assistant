@@ -1,11 +1,12 @@
 # Logs
 logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+.pnpm-debug.log*
 firebase-debug.log*
 firebase-debug.*.log*
+
+# Compiled JavaScript files
+lib
 
 # Firebase cache
 .firebase/
@@ -46,6 +47,8 @@ build/Release
 
 # Dependency directories
 node_modules/
+/.pnp
+.pnp.js
 
 # Optional npm cache directory
 .npm
@@ -64,3 +67,21 @@ node_modules/
 
 # dotenv environment variables file
 .env
+.env*.local
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
