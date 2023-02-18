@@ -1,22 +1,12 @@
 import styled from '@emotion/styled'
 
-export const Main = styled.main`
-  min-height: 100vh;
-  min-width: 800px;
-  font-size: x-large;
-  background-color: #6339a5;
+export const StyledHeader = styled.header`
+  ${(props: { isRoot?: boolean }) => props.isRoot && 'height: 740px;'}
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-`
-
-export const Banner = styled.header`
-  height: 800px;
-  display: flex;
-  justify-content: space-evenly;
   flex-direction: column;
   align-items: center;
-  color: white;
+  padding: 8rem 0 2rem 0;
   > div {
     height: fit-content;
     position: relative;
@@ -30,7 +20,7 @@ export const Banner = styled.header`
   }
 `
 
-export const Navbar = styled.nav`
+export const StyledNavbar = styled.nav`
   > a {
     margin: 0 1rem;
   }
@@ -41,9 +31,5 @@ export const Subtitle = styled.div`
 `
 
 export const Slogan = styled.div`
-  font-size: 128px;
-`
-
-export const Body = styled.section`
-  background-color: white;
+  font-size: 124px;
 `

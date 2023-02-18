@@ -3,8 +3,9 @@ import { Cabin } from '@next/font/google'
 import Footer from '@/components/footer'
 
 import './globals.sass'
-import { Main } from './styles'
+import { StyledMain } from './styles'
 import RootStyleRegistry from '@/app/emotion'
+import Header from '@/components/header'
 
 const inter = Cabin({ subsets: ['latin'] })
 
@@ -18,10 +19,11 @@ export default function RootLayout({
       <head />
       <body>
         <RootStyleRegistry>
-          <Main className={inter.className}>
+          <StyledMain className={inter.className}>
+            <Header />
             {children}
             <Footer />
-          </Main>
+          </StyledMain>
         </RootStyleRegistry>
       </body>
     </html>
