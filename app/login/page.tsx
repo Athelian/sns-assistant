@@ -6,7 +6,7 @@ export default function Login() {
   return (
     <StyledContainer>
       <div>
-        <Button variant="contained">Login</Button>
+        <Button variant="contained">Log In</Button>
       </div>
     </StyledContainer>
   )
