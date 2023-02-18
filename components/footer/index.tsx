@@ -1,10 +1,10 @@
-import styles from './index.module.sass'
+import { StyledFooter } from './styles'
 
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
+    <StyledFooter>
       <span>Created by Eliot Austin-Forbes</span>
       <span>© 2023 Snai, All rights reserved.</span>
-    </footer>
+    </StyledFooter>
   )
 }

@@ -1,12 +1,14 @@
-import styles from './page.module.sass'
+'use client'
 import Section from '@/components/section'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function Home() {
+import { Banner, Body, Navbar, Slogan, Subtitle } from './styles'
+
+export default function Page() {
   return (
     <>
-      <header className={styles.banner}>
+      <Banner>
         <div>
           <div>
             <Image
@@ -16,18 +18,16 @@ export default function Home() {
               height={129.2}
               priority
             />
-            <div className={styles.subtitle}>
-              A revolution in social media networking
-            </div>
+            <Subtitle>A revolution in social media networking</Subtitle>
           </div>
-          <nav className={styles.navbar}>
+          <Navbar>
             <Link href="/login">Log In</Link>
             <Link href="/reg">Sign Up</Link>
-          </nav>
+          </Navbar>
         </div>
-        <div className={styles.slogan}>Install a new marketing team.</div>
-      </header>
-      <section className={styles.body}>
+        <Slogan>Install a new marketing team.</Slogan>
+      </Banner>
+      <Body>
         {[
           [
             'Elevate your social media presence with artificial intelligence',
@@ -51,7 +51,7 @@ export default function Home() {
             />
           )
         })}
-      </section>
+      </Body>
     </>
   )
 }
