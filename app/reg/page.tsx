@@ -1,23 +1,58 @@
 'use client'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTwitter } from '@fortawesome/free-brands-svg-icons'
+import { faGoogle, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
-import { TwitterAuthProvider, signInWithPopup } from 'firebase/auth'
+import {
+  GoogleAuthProvider,
+  TwitterAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth'
 
 import { auth } from '@/lib/init'
 
-import { StyledContainer } from './styles'
-import { useState } from 'react'
+import { StyledButtonContainer, StyledContainer } from './styles'
 
 export default function Reg() {
-  const [twitterState, setTwitterState] = useState<{
-    token: string | null
-    secret: string | null
-  }>({
-    token: null,
-    secret: null,
-  })
+  /**
+   * Function called when clicking the Login/Logout button.
+   */
+  function toggleSignInGoogle() {
+    if (!auth.currentUser) {
+      const provider = new GoogleAuthProvider()
+      provider.addScope('https://www.googleapis.com/auth/contacts.readonly')
+      signInWithPopup(auth, provider)
+        .then(function (result) {
+          /**
+           * This gives you a Google Access Token. You can use it to access the Google API.
+           * This is taken from docs, but it is wrong it is either
+           * _tokenResponse.oauthAccessToken (not on interface) or user.stsTokenManager.accessToken
+           */
+          const user = result.user
+          console.log(result)
+        })
+        .catch(function (error) {
+          // Handle Errors here.
+          const errorCode = error.code
+          const errorMessage = error.message
+          // The email of the user's account used.
+          const email = error.email
+          // The firebase.auth.AuthCredential type that was used.
+          const credential = error.credential
+          if (errorCode === 'auth/account-exists-with-different-credential') {
+            alert(
+              'You have already signed up with a different auth provider for that email.'
+            )
+            // If you are using multiple auth providers on your app you should handle linking
+            // the user's accounts here.
+          } else {
+            console.error(error)
+          }
+        })
+    } else {
+      auth.signOut()
+    }
+  }
 
   /**
    * Function called when clicking the Login/Logout button.
@@ -31,21 +66,20 @@ export default function Reg() {
           // You can use these server side with your app's credentials to access the Twitter API.
 
           // @ts-expect-error Need to define shape of twitter response.
-          var token = result.credential.accessToken as string
+          const token = result.credential.accessToken as string
           // @ts-expect-error Need to define shape of twitter response.
-          var secret = result.credential.secret as string
+          const secret = result.credential.secret as string
           // The signed-in user info.
-          var user = result.user
-          setTwitterState({ token, secret })
+          const user = result.user
         })
         .catch(function (error) {
           // Handle Errors here.
-          var errorCode = error.code
-          var errorMessage = error.message
+          const errorCode = error.code
+          const errorMessage = error.message
           // The email of the user's account used.
-          var email = error.email
+          const email = error.email
           // The firebase.auth.AuthCredential type that was used.
-          var credential = error.credential
+          const credential = error.credential
           if (errorCode === 'auth/account-exists-with-different-credential') {
             alert(
               'You have already signed up with a different auth provider for that email.'
@@ -63,12 +97,16 @@ export default function Reg() {
 
   return (
     <StyledContainer>
-      <div>
+      <StyledButtonContainer>
+        <Button variant="contained" onClick={toggleSignInGoogle}>
+          <FontAwesomeIcon icon={faGoogle} />
+          &nbsp;Google
+        </Button>
         <Button variant="contained" onClick={toggleSignInTwitter}>
           <FontAwesomeIcon icon={faTwitter} />
           &nbsp;Twitter
         </Button>
-      </div>
+      </StyledButtonContainer>
     </StyledContainer>
   )
 }
