@@ -6,7 +6,7 @@ export const StyledHeader = styled.header`
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
-  padding: 8rem 0 2rem 0;
+  padding: 6rem 0 2rem 0;
   > div {
     height: fit-content;
     position: relative;
