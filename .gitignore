@@ -6,7 +6,7 @@ firebase-debug.log*
 firebase-debug.*.log*
 
 # Compiled JavaScript files
-lib
+functions/lib
 
 # Firebase cache
 .firebase/
