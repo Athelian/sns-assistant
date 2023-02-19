@@ -20,7 +20,6 @@ export default function Reg() {
   function toggleSignInGoogle() {
     if (!auth.currentUser) {
       const provider = new GoogleAuthProvider()
-      provider.addScope('https://www.googleapis.com/auth/contacts.readonly')
       signInWithPopup(auth, provider)
         .then(function (result) {
           /**
