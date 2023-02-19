@@ -9,7 +9,6 @@ console.log(app)
 console.log(auth)
 
 export default function Page() {
-  auth.onAuthStateChanged((nextOrObserver) => console.log(nextOrObserver))
   return (
     <StyledSection>
       {[

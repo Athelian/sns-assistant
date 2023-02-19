@@ -98,11 +98,11 @@ export default function Reg() {
     <StyledContainer>
       <StyledButtonContainer>
         <Button variant="contained" onClick={toggleSignInGoogle}>
-          <FontAwesomeIcon icon={faGoogle} size="lg" />
+          <FontAwesomeIcon icon={faGoogle} />
           &nbsp;Google
         </Button>
         <Button variant="contained" onClick={toggleSignInTwitter}>
-          <FontAwesomeIcon icon={faTwitter} size="lg" />
+          <FontAwesomeIcon icon={faTwitter} />
           &nbsp;Twitter
         </Button>
       </StyledButtonContainer>

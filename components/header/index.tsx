@@ -1,25 +1,14 @@
 'use client'
-import Image from 'next/image'
+import logo from '@/components/logo'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { Slogan, StyledHeader, StyledNavbar, Subtitle } from './styles'
-
-const logo = (
-  <>
-    <Image
-      src="/snai-high-resolution-logo-color-on-transparent-background.png"
-      alt="snai logo"
-      width={400}
-      height={129.2}
-      priority
-    />
-    <Subtitle>A revolution in social media networking</Subtitle>
-  </>
-)
+import { Slogan, StyledHeader, StyledNavbar } from './styles'
+import useAuth from '@/hooks/useAuth'
 
 export default function Header() {
+  const { isAuthenticated } = useAuth()
   const path = usePathname()
   const isRoot = path === '/'
 
@@ -29,8 +18,14 @@ export default function Header() {
         {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
         {isRoot && (
           <StyledNavbar>
-            <Link href="/login">Log In</Link>
-            <Link href="/reg">Sign Up</Link>
+            {isAuthenticated ? (
+              <Link href="/">My Account</Link>
+            ) : (
+              <>
+                <Link href="/reg">Log In</Link>
+                <Link href="/reg">Sign Up</Link>
+              </>
+            )}
           </StyledNavbar>
         )}
       </div>
