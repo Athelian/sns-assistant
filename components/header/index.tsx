@@ -2,8 +2,22 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import React from 'react'
 
 import { Slogan, StyledHeader, StyledNavbar, Subtitle } from './styles'
+
+const logo = (
+  <>
+    <Image
+      src="/snai-high-resolution-logo-color-on-transparent-background.png"
+      alt="snai logo"
+      width={400}
+      height={129.2}
+      priority
+    />
+    <Subtitle>A revolution in social media networking</Subtitle>
+  </>
+)
 
 export default function Header() {
   const path = usePathname()
@@ -12,16 +26,7 @@ export default function Header() {
   return (
     <StyledHeader isRoot={isRoot}>
       <div>
-        <div>
-          <Image
-            src="/snai-high-resolution-logo-color-on-transparent-background.png"
-            alt="snai logo"
-            width={400}
-            height={129.2}
-            priority
-          />
-          <Subtitle>A revolution in social media networking</Subtitle>
-        </div>
+        {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
         {isRoot && (
           <StyledNavbar>
             <Link href="/login">Log In</Link>
