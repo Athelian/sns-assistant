@@ -13,13 +13,23 @@ import {
   signInWithRedirect,
   getRedirectResult,
   FacebookAuthProvider,
+  linkWithRedirect,
 } from 'firebase/auth'
 
 import { auth } from '@/lib/init'
 
 import { StyledButtonContainer, StyledContainer } from './styles'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+
+const googleProvider = new GoogleAuthProvider()
+const twitterProvider = new TwitterAuthProvider()
+const facebookProvider = new FacebookAuthProvider()
+
+type ProviderId =
+  | typeof GoogleAuthProvider.PROVIDER_ID
+  | typeof TwitterAuthProvider.PROVIDER_ID
+  | typeof FacebookAuthProvider.PROVIDER_ID
 
 function getAuthRedirectIsPending() {
   for (let i = 0; i < sessionStorage.length; i++) {
@@ -34,32 +44,88 @@ function getAuthRedirectIsPending() {
   return false
 }
 
+function signInWithGoogle() {
+  return signInWithRedirect(auth, googleProvider)
+}
+
+function signInWithTwitter() {
+  return signInWithRedirect(auth, twitterProvider)
+}
+
+function signInWithFacebook() {
+  return signInWithRedirect(auth, facebookProvider)
+}
+
+function getProviderFromProviderId(providerId: ProviderId) {
+  switch (providerId) {
+    case GoogleAuthProvider.PROVIDER_ID:
+      return googleProvider
+    case TwitterAuthProvider.PROVIDER_ID:
+      return twitterProvider
+    case FacebookAuthProvider.PROVIDER_ID:
+    default:
+      return facebookProvider
+  }
+}
+
+function isProviderId(val: string): val is ProviderId {
+  return [
+    GoogleAuthProvider.PROVIDER_ID,
+    TwitterAuthProvider.PROVIDER_ID,
+    FacebookAuthProvider.PROVIDER_ID,
+  ].includes(val as ProviderId)
+}
+
 export default function Reg() {
   const router = useRouter()
   const [loading, setLoading] = useState(getAuthRedirectIsPending())
+  // Provider required for linking
+  const providerToLink = sessionStorage.getItem('providerToLink')
+
+  const signInWith = useCallback((providerId: ProviderId) => {
+    switch (providerId) {
+      case GoogleAuthProvider.PROVIDER_ID:
+        return signInWithGoogle()
+      case TwitterAuthProvider.PROVIDER_ID:
+        return signInWithTwitter()
+      case FacebookAuthProvider.PROVIDER_ID:
+      default:
+        return signInWithFacebook()
+    }
+  }, [])
 
   useEffect(() => {
     getRedirectResult(auth)
       .then(function (result) {
         console.log('redirectResult', result)
         if (result) {
-          router.push('/')
+          if (providerToLink && isProviderId(providerToLink)) {
+            sessionStorage.removeItem('providerToLink')
+            linkWithRedirect(
+              result.user,
+              getProviderFromProviderId(providerToLink)
+            )
+          } else {
+            router.push('/')
+          }
         }
       })
       .catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code
-        var errorMessage = error.message
-        // The email of the user's account used.
-        var email = error.email
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential
+        const errorCode = error.code
         if (errorCode === 'auth/account-exists-with-different-credential') {
-          alert(
-            'You have already signed up with a different auth provider for that email.'
-          )
-          // If you are using multiple auth providers on your app you should handle linking
-          // the user's accounts here.
+          const { providerId, verifiedProvider } =
+            error.customData._tokenResponse
+
+          if (
+            confirm(
+              `You have already signed up with ${verifiedProvider.join(
+                ' and '
+              )} for that email. Would you like to link your account now?`
+            )
+          ) {
+            sessionStorage.setItem('providerToLink', providerId)
+            signInWith(verifiedProvider[0])
+          }
         } else {
           console.error(error)
         }
@@ -67,37 +133,19 @@ export default function Reg() {
       .finally(() => {
         setLoading(false)
       })
-  }, [router])
+  }, [router, signInWith, providerToLink])
 
-  function toggleSignInGoogle() {
-    if (!auth.currentUser) {
+  const toggleSignIn = useCallback(
+    (providerId: ProviderId) => {
       setLoading(true)
-      const provider = new GoogleAuthProvider()
-      signInWithRedirect(auth, provider)
-    } else {
-      auth.signOut()
-    }
-  }
-
-  function toggleSignInTwitter() {
-    if (!auth.currentUser) {
-      setLoading(true)
-      const provider = new TwitterAuthProvider()
-      signInWithRedirect(auth, provider)
-    } else {
-      auth.signOut()
-    }
-  }
-
-  function toggleSignInFacebook() {
-    if (!auth.currentUser) {
-      setLoading(true)
-      const provider = new FacebookAuthProvider()
-      signInWithRedirect(auth, provider)
-    } else {
-      auth.signOut()
-    }
-  }
+      if (!auth.currentUser) {
+        signInWith(providerId)
+      } else {
+        return auth.signOut()
+      }
+    },
+    [signInWith]
+  )
 
   return (
     <StyledContainer>
@@ -105,15 +153,24 @@ export default function Reg() {
         <CircularProgress />
       ) : (
         <StyledButtonContainer>
-          <Button variant="contained" onClick={toggleSignInGoogle}>
+          <Button
+            variant="contained"
+            onClick={() => toggleSignIn('google.com')}
+          >
             <FontAwesomeIcon icon={faGoogle} />
             <span>Google</span>
           </Button>
-          <Button variant="contained" onClick={toggleSignInTwitter}>
+          <Button
+            variant="contained"
+            onClick={() => toggleSignIn('twitter.com')}
+          >
             <FontAwesomeIcon icon={faTwitter} />
             <span>Twitter</span>
           </Button>
-          <Button variant="contained" onClick={toggleSignInFacebook}>
+          <Button
+            variant="contained"
+            onClick={() => toggleSignIn('facebook.com')}
+          >
             <FontAwesomeIcon icon={faFacebook} />
             <span>Facebook</span>
           </Button>
