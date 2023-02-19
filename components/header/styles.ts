@@ -7,6 +7,7 @@ export const StyledHeader = styled.header`
   flex-direction: column;
   align-items: center;
   padding: 6rem 0 2rem 0;
+  background-color: #6339a5;
   > div {
     height: fit-content;
     position: relative;
