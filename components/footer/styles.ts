@@ -10,6 +10,7 @@ export const StyledFooter = styled.footer`
   color: white;
   > div {
     display: flex;
+    min-width: max-content;
     justify-content: space-between;
     width: 980px;
   }
