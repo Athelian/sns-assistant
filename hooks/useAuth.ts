@@ -1,13 +1,18 @@
 import { auth } from '@/lib/init'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function useAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
-  auth.onAuthStateChanged((nextOrObserver) => {
-    console.log('next obs', nextOrObserver)
-    setIsAuthenticated(!!nextOrObserver)
-  })
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((nextOrObserver) => {
+      console.log('next obs', nextOrObserver)
+      setIsAuthenticated(!!nextOrObserver)
+    })
+    return () => {
+      unsubscribe()
+    }
+  }, [])
 
   return { isAuthenticated }
 }

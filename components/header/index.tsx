@@ -6,6 +6,7 @@ import React from 'react'
 
 import { Slogan, StyledHeader, StyledNavbar } from './styles'
 import useAuth from '@/hooks/useAuth'
+import { auth } from '@/lib/init'
 
 export default function Header() {
   const { isAuthenticated } = useAuth()
@@ -18,14 +19,24 @@ export default function Header() {
         {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
         {isRoot && (
           <StyledNavbar>
-            {isAuthenticated ? (
-              <Link href="/">My Account</Link>
-            ) : (
-              <>
-                <Link href="/reg">Log In</Link>
-                <Link href="/reg">Sign Up</Link>
-              </>
-            )}
+            {isAuthenticated !== null &&
+              (isAuthenticated ? (
+                <>
+                  <Link href="/">My Account</Link>
+                  <span
+                    onClick={() => {
+                      auth.signOut()
+                    }}
+                  >
+                    Logout
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Link href="/reg">Log In</Link>
+                  <Link href="/reg">Sign Up</Link>
+                </>
+              ))}
           </StyledNavbar>
         )}
       </div>

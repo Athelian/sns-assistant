@@ -1,12 +1,7 @@
 'use client'
 import Section from '@/components/section'
-import { app, auth, initFirebase } from '@/lib/init'
 
 import { StyledSection } from './styles'
-
-initFirebase()
-console.log(app)
-console.log(auth)
 
 export default function Page() {
   return (

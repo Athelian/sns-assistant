@@ -8,6 +8,7 @@ export const StyledHeader = styled.header`
   align-items: center;
   padding: 6rem 0 2rem 0;
   background-color: #6339a5;
+  color: white;
   > div {
     height: fit-content;
     position: relative;
@@ -22,8 +23,14 @@ export const StyledHeader = styled.header`
 `
 
 export const StyledNavbar = styled.nav`
-  > a {
+  > * {
     margin: 0 1rem;
+    color: white;
+    text-decoration: none;
+    &:hover {
+      color: #ef86c1;
+      cursor: pointer;
+    }
   }
 `
 

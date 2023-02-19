@@ -1,5 +1,5 @@
 'use client'
-import { Button } from '@mui/material'
+import { Button, CircularProgress } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
@@ -7,51 +7,76 @@ import {
   GoogleAuthProvider,
   TwitterAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from 'firebase/auth'
 
 import { auth } from '@/lib/init'
 
 import { StyledButtonContainer, StyledContainer } from './styles'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
+const getAuthRedirectIsPending = () => {
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i)
+    if (
+      key?.startsWith('firebase:pendingRedirect') &&
+      sessionStorage.getItem(key) === '"true"'
+    ) {
+      return true
+    }
+  }
+  return false
+}
 
 export default function Reg() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(getAuthRedirectIsPending())
   /**
    * Function called when clicking the Login/Logout button.
    */
   function toggleSignInGoogle() {
     if (!auth.currentUser) {
-      const provider = new GoogleAuthProvider()
-      signInWithPopup(auth, provider)
-        .then(function (result) {
-          /**
-           * This gives you a Google Access Token. You can use it to access the Google API.
-           * This is taken from docs, but it is wrong it is either
-           * _tokenResponse.oauthAccessToken (not on interface) or user.stsTokenManager.accessToken
-           */
-          const user = result.user
-          console.log(result)
-        })
-        .catch(function (error) {
-          // Handle Errors here.
-          const errorCode = error.code
-          const errorMessage = error.message
-          // The email of the user's account used.
-          const email = error.email
-          // The firebase.auth.AuthCredential type that was used.
-          const credential = error.credential
-          if (errorCode === 'auth/account-exists-with-different-credential') {
-            alert(
-              'You have already signed up with a different auth provider for that email.'
-            )
-            // If you are using multiple auth providers on your app you should handle linking
-            // the user's accounts here.
-          } else {
-            console.error(error)
-          }
-        })
+      setLoading(true)
+      var provider = new GoogleAuthProvider()
+      provider.addScope('https://www.googleapis.com/auth/plus.login')
+      signInWithRedirect(auth, provider)
     } else {
       auth.signOut()
     }
   }
+
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then(function (result) {
+        console.log('redirectResult', result)
+        if (result) {
+          router.push('/')
+        }
+      })
+      .catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code
+        var errorMessage = error.message
+        // The email of the user's account used.
+        var email = error.email
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential
+        if (errorCode === 'auth/account-exists-with-different-credential') {
+          alert(
+            'You have already signed up with a different auth provider for that email.'
+          )
+          // If you are using multiple auth providers on your app you should handle linking
+          // the user's accounts here.
+        } else {
+          console.error(error)
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [router])
 
   /**
    * Function called when clicking the Login/Logout button.
@@ -96,16 +121,20 @@ export default function Reg() {
 
   return (
     <StyledContainer>
-      <StyledButtonContainer>
-        <Button variant="contained" onClick={toggleSignInGoogle}>
-          <FontAwesomeIcon icon={faGoogle} />
-          &nbsp;Google
-        </Button>
-        <Button variant="contained" onClick={toggleSignInTwitter}>
-          <FontAwesomeIcon icon={faTwitter} />
-          &nbsp;Twitter
-        </Button>
-      </StyledButtonContainer>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <StyledButtonContainer>
+          <Button variant="contained" onClick={toggleSignInGoogle}>
+            <FontAwesomeIcon icon={faGoogle} />
+            &nbsp;Google
+          </Button>
+          <Button variant="contained" onClick={toggleSignInTwitter}>
+            <FontAwesomeIcon icon={faTwitter} />
+            &nbsp;Twitter
+          </Button>
+        </StyledButtonContainer>
+      )}
     </StyledContainer>
   )
 }

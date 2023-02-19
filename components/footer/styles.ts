@@ -7,12 +7,10 @@ export const StyledFooter = styled.footer`
   justify-content: center;
   padding: 2rem 4rem;
   font-size: revert;
+  color: white;
   > div {
     display: flex;
     justify-content: space-between;
     width: 980px;
-    > span:nth-child(1) {
-      color: white;
-    }
   }
 `
