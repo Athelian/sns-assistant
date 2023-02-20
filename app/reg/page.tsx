@@ -21,6 +21,7 @@ import { auth } from '@/lib/init'
 import { StyledButtonContainer, StyledContainer } from './styles'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+import NoSsrWrapper from '@/components/noSsrWrapper'
 
 const googleProvider = new GoogleAuthProvider()
 const twitterProvider = new TwitterAuthProvider()
@@ -76,7 +77,7 @@ function isProviderId(val: string): val is ProviderId {
   ].includes(val as ProviderId)
 }
 
-export default function Reg() {
+function Reg() {
   const router = useRouter()
   const [loading, setLoading] = useState(getAuthRedirectIsPending())
   // Provider required for linking
@@ -177,5 +178,13 @@ export default function Reg() {
         </StyledButtonContainer>
       )}
     </StyledContainer>
+  )
+}
+
+export default function NoSsrReg() {
+  return (
+    <NoSsrWrapper>
+      <Reg />
+    </NoSsrWrapper>
   )
 }
