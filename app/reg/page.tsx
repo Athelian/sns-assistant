@@ -98,13 +98,13 @@ function Reg() {
             <FontAwesomeIcon icon={faGoogle} />
             <span>Google</span>
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             onClick={() => toggleSignIn(TwitterAuthProvider.PROVIDER_ID)}
           >
             <FontAwesomeIcon icon={faTwitter} />
             <span>Twitter</span>
-          </Button>
+          </Button> */}
           <Button
             variant="contained"
             onClick={() => toggleSignIn(FacebookAuthProvider.PROVIDER_ID)}
