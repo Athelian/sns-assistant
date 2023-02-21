@@ -1,9 +1,9 @@
-import { https } from 'firebase-functions'
 import admin from 'firebase-admin'
 import TwitterApi from 'twitter-api-v2'
 
 // OpenAI API init
 import { Configuration, OpenAIApi } from 'openai'
+import { NextApiRequest, NextApiResponse } from 'next'
 admin.initializeApp()
 
 // Database reference
@@ -22,7 +22,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration)
 
 // STEP 1 - Auth URL
-exports.auth = https.onRequest(async (_, resp) => {
+exports.auth = async (_: NextApiRequest, resp: NextApiResponse) => {
   const { url, codeVerifier, state } = twitterClient.generateOAuth2AuthLink(
     callbackURL,
     {
@@ -37,10 +37,10 @@ exports.auth = https.onRequest(async (_, resp) => {
   })
 
   resp.redirect(url)
-})
+}
 
 // STEP 2 - Verify callback code, store access_token
-exports.callback = https.onRequest(async (req, resp) => {
+exports.callback = async (req: NextApiRequest, resp: NextApiResponse) => {
   const { state, code } = req.query
 
   if (code !== 'string') {
@@ -79,10 +79,10 @@ exports.callback = https.onRequest(async (req, resp) => {
   const { data } = await loggedClient.v2.me() // start using the client if you want
 
   resp.send(data)
-})
+}
 
 // STEP 3 - Refresh tokens and post tweets
-exports.tweet = https.onRequest(async (_, resp) => {
+exports.tweet = async (_: NextApiRequest, resp: NextApiResponse) => {
   const snapshotData = (await dbRef.get()).data()
 
   if (snapshotData === undefined) {
@@ -119,4 +119,4 @@ exports.tweet = https.onRequest(async (_, resp) => {
   const { data } = await refreshedClient.v2.tweet(nextTweet)
 
   resp.send(data)
-})
+}
