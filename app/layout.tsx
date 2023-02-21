@@ -8,9 +8,8 @@ import RootStyleRegistry from '@/app/emotion'
 import Header from '@/components/header'
 import { ThemeProvider } from '@mui/material'
 import theme from '@/app/theme'
-import { app, auth, initFirebase } from '@/lib/init'
+import { app, auth } from '@/lib/init'
 
-initFirebase()
 console.log(app)
 console.log(auth)
 const inter = Cabin({ subsets: ['latin'] })

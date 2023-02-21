@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 
-// TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -17,11 +16,4 @@ const app = initializeApp(firebaseConfig)
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app)
 
-function initFirebase() {
-  if (typeof window !== undefined) {
-    initializeApp(firebaseConfig)
-    console.log('Firebase has been init successfully')
-  }
-}
-
-export { app, auth, initFirebase }
+export { app, auth }

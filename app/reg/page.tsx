@@ -10,7 +10,6 @@ import {
 import {
   GoogleAuthProvider,
   TwitterAuthProvider,
-  signInWithRedirect,
   getRedirectResult,
   FacebookAuthProvider,
   linkWithRedirect,
@@ -20,80 +19,21 @@ import { auth } from '@/lib/init'
 
 import { StyledButtonContainer, StyledContainer } from './styles'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
-import NoSsrWrapper from '@/components/noSsrWrapper'
-
-const googleProvider = new GoogleAuthProvider()
-const twitterProvider = new TwitterAuthProvider()
-const facebookProvider = new FacebookAuthProvider()
-
-type ProviderId =
-  | typeof GoogleAuthProvider.PROVIDER_ID
-  | typeof TwitterAuthProvider.PROVIDER_ID
-  | typeof FacebookAuthProvider.PROVIDER_ID
-
-function getAuthRedirectIsPending() {
-  for (let i = 0; i < sessionStorage.length; i++) {
-    const key = sessionStorage.key(i)
-    if (
-      key?.startsWith('firebase:pendingRedirect') &&
-      sessionStorage.getItem(key) === '"true"'
-    ) {
-      return true
-    }
-  }
-  return false
-}
-
-function signInWithGoogle() {
-  return signInWithRedirect(auth, googleProvider)
-}
-
-function signInWithTwitter() {
-  return signInWithRedirect(auth, twitterProvider)
-}
-
-function signInWithFacebook() {
-  return signInWithRedirect(auth, facebookProvider)
-}
-
-function getProviderFromProviderId(providerId: ProviderId) {
-  switch (providerId) {
-    case GoogleAuthProvider.PROVIDER_ID:
-      return googleProvider
-    case TwitterAuthProvider.PROVIDER_ID:
-      return twitterProvider
-    case FacebookAuthProvider.PROVIDER_ID:
-    default:
-      return facebookProvider
-  }
-}
-
-function isProviderId(val: string): val is ProviderId {
-  return [
-    GoogleAuthProvider.PROVIDER_ID,
-    TwitterAuthProvider.PROVIDER_ID,
-    FacebookAuthProvider.PROVIDER_ID,
-  ].includes(val as ProviderId)
-}
+import { useEffect, useState } from 'react'
+import { ProviderId } from '@/types/auth'
+import {
+  getAuthRedirectIsPending,
+  getProviderFromProviderId,
+  isProviderId,
+  signInWith,
+} from '@/app/reg/helpers'
+import withoutSsr from '@/components/noSsrHoc'
 
 function Reg() {
   const router = useRouter()
   const [loading, setLoading] = useState(getAuthRedirectIsPending())
   // Provider required for linking
   const providerToLink = sessionStorage.getItem('providerToLink')
-
-  const signInWith = useCallback((providerId: ProviderId) => {
-    switch (providerId) {
-      case GoogleAuthProvider.PROVIDER_ID:
-        return signInWithGoogle()
-      case TwitterAuthProvider.PROVIDER_ID:
-        return signInWithTwitter()
-      case FacebookAuthProvider.PROVIDER_ID:
-      default:
-        return signInWithFacebook()
-    }
-  }, [])
 
   useEffect(() => {
     getRedirectResult(auth)
@@ -134,19 +74,16 @@ function Reg() {
       .finally(() => {
         setLoading(false)
       })
-  }, [router, signInWith, providerToLink])
+  }, [router, providerToLink])
 
-  const toggleSignIn = useCallback(
-    (providerId: ProviderId) => {
-      setLoading(true)
-      if (!auth.currentUser) {
-        signInWith(providerId)
-      } else {
-        return auth.signOut()
-      }
-    },
-    [signInWith]
-  )
+  const toggleSignIn = (providerId: ProviderId) => {
+    setLoading(true)
+    if (!auth.currentUser) {
+      signInWith(providerId)
+    } else {
+      return auth.signOut()
+    }
+  }
 
   return (
     <StyledContainer>
@@ -156,21 +93,21 @@ function Reg() {
         <StyledButtonContainer>
           <Button
             variant="contained"
-            onClick={() => toggleSignIn('google.com')}
+            onClick={() => toggleSignIn(GoogleAuthProvider.PROVIDER_ID)}
           >
             <FontAwesomeIcon icon={faGoogle} />
             <span>Google</span>
           </Button>
           <Button
             variant="contained"
-            onClick={() => toggleSignIn('twitter.com')}
+            onClick={() => toggleSignIn(TwitterAuthProvider.PROVIDER_ID)}
           >
             <FontAwesomeIcon icon={faTwitter} />
             <span>Twitter</span>
           </Button>
           <Button
             variant="contained"
-            onClick={() => toggleSignIn('facebook.com')}
+            onClick={() => toggleSignIn(FacebookAuthProvider.PROVIDER_ID)}
           >
             <FontAwesomeIcon icon={faFacebook} />
             <span>Facebook</span>
@@ -181,10 +118,4 @@ function Reg() {
   )
 }
 
-export default function NoSsrReg() {
-  return (
-    <NoSsrWrapper>
-      <Reg />
-    </NoSsrWrapper>
-  )
-}
+export default withoutSsr(Reg)
