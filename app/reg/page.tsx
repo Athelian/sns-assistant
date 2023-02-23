@@ -15,7 +15,7 @@ import {
   linkWithRedirect,
 } from 'firebase/auth'
 
-import { auth } from '@/lib/init'
+import { auth } from '@/firebase/clientApp'
 
 import { StyledButtonContainer, StyledContainer } from './styles'
 import { useRouter } from 'next/navigation'
@@ -47,6 +47,10 @@ function Reg() {
               getProviderFromProviderId(providerToLink)
             )
           } else {
+            fetch('/api/createUser', {
+              method: 'POST',
+              body: JSON.stringify(result.user),
+            }).then((res) => res.json())
             router.push('/')
           }
         }
@@ -59,9 +63,7 @@ function Reg() {
 
           if (
             confirm(
-              `You have already signed up with ${verifiedProvider.join(
-                ' and '
-              )} for that email. Would you like to link your account now?`
+              `You have already signed up with ${verifiedProvider[0]} for that email. Would you like to link your account now?`
             )
           ) {
             sessionStorage.setItem('providerToLink', providerId)

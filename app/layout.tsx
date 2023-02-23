@@ -8,10 +8,7 @@ import RootStyleRegistry from '@/app/emotion'
 import Header from '@/components/header'
 import { ThemeProvider } from '@mui/material'
 import theme from '@/app/theme'
-import { app, auth } from '@/lib/init'
 
-console.log(app)
-console.log(auth)
 const inter = Cabin({ subsets: ['latin'] })
 
 export default function RootLayout({

@@ -1,4 +1,4 @@
-import { auth } from '@/lib/init'
+import { auth } from '@/firebase/clientApp'
 import { useEffect, useState } from 'react'
 
 export default function useAuth() {

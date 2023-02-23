@@ -6,7 +6,7 @@ import React from 'react'
 
 import { Slogan, StyledHeader, StyledNavbar } from './styles'
 import useAuth from '@/hooks/useAuth'
-import { auth } from '@/lib/init'
+import { auth } from '@/firebase/clientApp'
 
 export default function Header() {
   const { isAuthenticated } = useAuth()
