@@ -20,7 +20,6 @@ import { auth } from '@/firebase/clientApp'
 import { StyledButtonContainer, StyledContainer } from './styles'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ProviderId } from '@/types/auth'
 import {
   getAuthRedirectIsPending,
   getProviderFromProviderId,
@@ -78,15 +77,6 @@ function Reg() {
       })
   }, [router, providerToLink])
 
-  const toggleSignIn = (providerId: ProviderId) => {
-    setLoading(true)
-    if (!auth.currentUser) {
-      signInWith(providerId)
-    } else {
-      return auth.signOut()
-    }
-  }
-
   return (
     <StyledContainer>
       {loading ? (
@@ -95,7 +85,10 @@ function Reg() {
         <StyledButtonContainer>
           <Button
             variant="contained"
-            onClick={() => toggleSignIn(GoogleAuthProvider.PROVIDER_ID)}
+            onClick={() => {
+              setLoading(true)
+              signInWith(GoogleAuthProvider.PROVIDER_ID)
+            }}
           >
             <FontAwesomeIcon icon={faGoogle} />
             <span>Google</span>
@@ -109,7 +102,10 @@ function Reg() {
           </Button> */}
           <Button
             variant="contained"
-            onClick={() => toggleSignIn(FacebookAuthProvider.PROVIDER_ID)}
+            onClick={() => {
+              setLoading(true)
+              signInWith(FacebookAuthProvider.PROVIDER_ID)
+            }}
           >
             <FontAwesomeIcon icon={faFacebook} />
             <span>Facebook</span>
