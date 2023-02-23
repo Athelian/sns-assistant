@@ -15,12 +15,11 @@ import {
   linkWithRedirect,
 } from 'firebase/auth'
 
-import { auth } from '@/lib/init'
+import { auth } from '@/firebase/clientApp'
 
 import { StyledButtonContainer, StyledContainer } from './styles'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ProviderId } from '@/types/auth'
 import {
   getAuthRedirectIsPending,
   getProviderFromProviderId,
@@ -47,6 +46,10 @@ function Reg() {
               getProviderFromProviderId(providerToLink)
             )
           } else {
+            fetch('/api/createUser', {
+              method: 'POST',
+              body: JSON.stringify(result.user),
+            }).then((res) => res.json())
             router.push('/')
           }
         }
@@ -59,9 +62,7 @@ function Reg() {
 
           if (
             confirm(
-              `You have already signed up with ${verifiedProvider.join(
-                ' and '
-              )} for that email. Would you like to link your account now?`
+              `You have already signed up with ${verifiedProvider[0]} for that email. Would you like to link your account now?`
             )
           ) {
             sessionStorage.setItem('providerToLink', providerId)
@@ -76,15 +77,6 @@ function Reg() {
       })
   }, [router, providerToLink])
 
-  const toggleSignIn = (providerId: ProviderId) => {
-    setLoading(true)
-    if (!auth.currentUser) {
-      signInWith(providerId)
-    } else {
-      return auth.signOut()
-    }
-  }
-
   return (
     <StyledContainer>
       {loading ? (
@@ -93,7 +85,10 @@ function Reg() {
         <StyledButtonContainer>
           <Button
             variant="contained"
-            onClick={() => toggleSignIn(GoogleAuthProvider.PROVIDER_ID)}
+            onClick={() => {
+              setLoading(true)
+              signInWith(GoogleAuthProvider.PROVIDER_ID)
+            }}
           >
             <FontAwesomeIcon icon={faGoogle} />
             <span>Google</span>
@@ -107,7 +102,10 @@ function Reg() {
           </Button> */}
           <Button
             variant="contained"
-            onClick={() => toggleSignIn(FacebookAuthProvider.PROVIDER_ID)}
+            onClick={() => {
+              setLoading(true)
+              signInWith(FacebookAuthProvider.PROVIDER_ID)
+            }}
           >
             <FontAwesomeIcon icon={faFacebook} />
             <span>Facebook</span>

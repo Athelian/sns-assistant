@@ -8,10 +8,8 @@ import RootStyleRegistry from '@/app/emotion'
 import Header from '@/components/header'
 import { ThemeProvider } from '@mui/material'
 import theme from '@/app/theme'
-import { app, auth } from '@/lib/init'
+import AuthContextComp from '@/contexts/authContext'
 
-console.log(app)
-console.log(auth)
 const inter = Cabin({ subsets: ['latin'] })
 
 export default function RootLayout({
@@ -25,11 +23,13 @@ export default function RootLayout({
       <body>
         <RootStyleRegistry>
           <ThemeProvider theme={theme}>
-            <StyledMain className={inter.className}>
-              <Header />
-              {children}
-              <Footer />
-            </StyledMain>
+            <AuthContextComp>
+              <StyledMain className={inter.className}>
+                <Header />
+                {children}
+                <Footer />
+              </StyledMain>
+            </AuthContextComp>
           </ThemeProvider>
         </RootStyleRegistry>
       </body>

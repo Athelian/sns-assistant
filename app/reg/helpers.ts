@@ -3,7 +3,7 @@ import {
   googleProvider,
   twitterProvider,
 } from '@/app/reg/constants'
-import { auth } from '@/lib/init'
+import { auth } from '@/firebase/clientApp'
 import { ProviderId } from '@/types/auth'
 import {
   FacebookAuthProvider,

@@ -2,14 +2,14 @@
 import logo from '@/components/logo'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useAuth } from '@/contexts/authContext'
 import React from 'react'
 
 import { Slogan, StyledHeader, StyledNavbar } from './styles'
-import useAuth from '@/hooks/useAuth'
-import { auth } from '@/lib/init'
+import { auth } from '@/firebase/clientApp'
 
 export default function Header() {
-  const { isAuthenticated } = useAuth()
+  const isAuthenticated = useAuth()
   const path = usePathname()
   const isRoot = path === '/'
 
