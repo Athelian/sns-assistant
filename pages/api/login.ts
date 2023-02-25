@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import { db } from '@/firebase/nodeApp'
 
-// Create a new user
+// Handle login
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

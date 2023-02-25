@@ -7,6 +7,7 @@ import theme from '@/app/theme'
 import Footer from '@/components/footer'
 import Header from '@/components/header'
 import AuthContextComp from '@/contexts/authContext'
+import FacebookSDK from '@/facebook/sdk'
 
 import './globals.sass'
 
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <body>
+        <FacebookSDK />
         <RootStyleRegistry>
           <ThemeProvider theme={theme}>
             <AuthContextComp>
