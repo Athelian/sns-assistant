@@ -3,6 +3,7 @@ import React from 'react'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import logo from '@/components/logo'
 import { useAuth } from '@/contexts/authContext'
@@ -13,6 +14,7 @@ import { Slogan, StyledHeader, StyledNavbar } from './styles'
 export default function Header() {
   const isAuthenticated = useAuth()
   const path = usePathname()
+  const router = useRouter()
   const isRoot = path == '/'
   const isDashboard = path == '/dashboard'
   const isNavigable = path !== '/reg'
@@ -35,6 +37,7 @@ export default function Header() {
                   <span
                     onClick={() => {
                       auth.signOut()
+                      router.push('/')
                     }}
                   >
                     Logout
