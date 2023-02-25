@@ -1,12 +1,13 @@
 'use client'
-import { Button, CircularProgress } from '@mui/material'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useEffect, useState } from 'react'
+
 import {
   faFacebook,
   faGoogle,
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, CircularProgress } from '@mui/material'
 import {
   GoogleAuthProvider,
   TwitterAuthProvider,
@@ -14,20 +15,19 @@ import {
   FacebookAuthProvider,
   linkWithRedirect,
 } from 'firebase/auth'
-
-import { auth } from '@/firebase/clientApp'
-
-import { StyledContainer } from '@/app/styles'
-import { StyledButtonContainer } from './styles'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+
 import {
   getAuthRedirectIsPending,
   getProviderFromProviderId,
   isProviderId,
   signInWith,
 } from '@/app/reg/helpers'
+import { StyledContainer } from '@/app/styles'
 import withoutSsr from '@/components/noSsrHoc'
+import { auth } from '@/firebase/clientApp'
+
+import { StyledButtonContainer } from './styles'
 
 function Reg() {
   const router = useRouter()

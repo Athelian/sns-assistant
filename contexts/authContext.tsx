@@ -5,8 +5,10 @@ import {
   useContext,
   ReactNode,
 } from 'react'
-import { auth } from '../firebase/clientApp'
+
 import { onAuthStateChanged } from 'firebase/auth'
+
+import { auth } from '../firebase/clientApp'
 
 type AuthContextType = boolean | null
 

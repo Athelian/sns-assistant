@@ -1,14 +1,16 @@
 'use client'
+import { ThemeProvider } from '@mui/material'
 import { Cabin } from '@next/font/google'
+
+import RootStyleRegistry from '@/app/emotion'
+import theme from '@/app/theme'
 import Footer from '@/components/footer'
+import Header from '@/components/header'
+import AuthContextComp from '@/contexts/authContext'
 
 import './globals.sass'
+
 import { StyledMain } from './styles'
-import RootStyleRegistry from '@/app/emotion'
-import Header from '@/components/header'
-import { ThemeProvider } from '@mui/material'
-import theme from '@/app/theme'
-import AuthContextComp from '@/contexts/authContext'
 
 const inter = Cabin({ subsets: ['latin'] })
 

@@ -1,16 +1,17 @@
 import {
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  TwitterAuthProvider,
+} from 'firebase/auth'
+
+import {
   facebookProvider,
   googleProvider,
   twitterProvider,
 } from '@/app/reg/constants'
 import { auth } from '@/firebase/clientApp'
 import { ProviderId } from '@/types/auth'
-import {
-  FacebookAuthProvider,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  TwitterAuthProvider,
-} from 'firebase/auth'
 
 export function getAuthRedirectIsPending() {
   return (
