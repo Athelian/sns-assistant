@@ -1,9 +1,9 @@
 import admin from 'firebase-admin'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { Configuration, OpenAIApi } from 'openai'
 import TwitterApi from 'twitter-api-v2'
 
 // OpenAI API init
-import { Configuration, OpenAIApi } from 'openai'
-import { NextApiRequest, NextApiResponse } from 'next'
 admin.initializeApp()
 
 // Database reference
@@ -20,66 +20,6 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 })
 const openai = new OpenAIApi(configuration)
-
-// STEP 1 - Auth URL
-exports.auth = async (_: NextApiRequest, resp: NextApiResponse) => {
-  const { url, codeVerifier, state } = twitterClient.generateOAuth2AuthLink(
-    callbackURL,
-    {
-      scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
-    }
-  )
-
-  // store verifier
-  await dbRef.set({
-    codeVerifier,
-    state,
-  })
-
-  resp.redirect(url)
-}
-
-// STEP 2 - Verify callback code, store access_token
-exports.callback = async (req: NextApiRequest, resp: NextApiResponse) => {
-  const { state, code } = req.query
-
-  if (code !== 'string') {
-    resp.status(400).send('Invalid code')
-    return
-  }
-
-  const snapshotData = (await dbRef.get()).data()
-
-  if (snapshotData === undefined) {
-    resp.status(400).send('Failed to get snapshot data')
-    return
-  }
-
-  const { codeVerifier, state: storedState } = snapshotData
-
-  if (state !== storedState) {
-    resp.status(400).send('Stored tokens do not match!')
-  }
-
-  const {
-    client: loggedClient,
-    accessToken,
-    refreshToken,
-  } = await twitterClient.loginWithOAuth2({
-    code,
-    codeVerifier,
-    redirectUri: callbackURL,
-  })
-
-  await dbRef.set({
-    accessToken,
-    refreshToken,
-  })
-
-  const { data } = await loggedClient.v2.me() // start using the client if you want
-
-  resp.send(data)
-}
 
 // STEP 3 - Refresh tokens and post tweets
 exports.tweet = async (_: NextApiRequest, resp: NextApiResponse) => {

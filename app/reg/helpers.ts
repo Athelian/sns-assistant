@@ -13,12 +13,8 @@ import {
 import { auth } from '@/firebase/clientApp'
 import { ProviderId } from '@/types/auth'
 
-export function getAuthRedirectIsPending() {
-  return (
-    sessionStorage.getItem(
-      `firebase:pendingRedirect:${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}:[DEFAULT]`
-    ) === '"true"'
-  )
+export function getLoginPending() {
+  return sessionStorage.getItem(`sns:pendingLogin`) === '"true"'
 }
 
 export function signInWith(providerId: ProviderId) {
