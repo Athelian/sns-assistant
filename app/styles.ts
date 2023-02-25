@@ -12,3 +12,13 @@ export const StyledMain = styled.main`
 export const StyledSection = styled.section`
   background-color: white;
 `
+
+export const StyledContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 6;
+  > div {
+    height: max-content;
+  }
+`

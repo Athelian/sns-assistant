@@ -17,7 +17,8 @@ import {
 
 import { auth } from '@/firebase/clientApp'
 
-import { StyledButtonContainer, StyledContainer } from './styles'
+import { StyledContainer } from '@/app/styles'
+import { StyledButtonContainer } from './styles'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import {
@@ -50,7 +51,7 @@ function Reg() {
               method: 'POST',
               body: JSON.stringify(result.user),
             }).then((res) => res.json())
-            router.push('/')
+            router.push('/dashboard')
           }
         }
       })
