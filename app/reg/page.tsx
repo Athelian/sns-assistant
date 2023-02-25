@@ -25,7 +25,7 @@ import {
   getProviderFromProviderId,
   isProviderId,
   signInWith,
-} from '@/utils/login'
+} from '@/utils/auth'
 
 import { StyledButtonContainer } from './styles'
 

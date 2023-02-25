@@ -11,7 +11,7 @@ import {
   facebookProvider,
   googleProvider,
   twitterProvider,
-} from '@/constants/login'
+} from '@/constants/auth'
 import { auth } from '@/firebase/clientApp'
 import { ProviderId } from '@/types/auth'
 
