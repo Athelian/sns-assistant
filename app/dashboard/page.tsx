@@ -1,8 +1,9 @@
 'use client'
 
 import { StyledContainer } from '@/app/styles'
+import withoutSsr from '@/components/noSsrHoc'
 
-export default function Dashboard() {
+function Dashboard() {
   FB.ui(
     {
       method: 'share',
@@ -15,3 +16,5 @@ export default function Dashboard() {
 
   return <StyledContainer>Tweets</StyledContainer>
 }
+
+export default withoutSsr(Dashboard)
