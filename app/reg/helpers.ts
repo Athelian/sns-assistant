@@ -14,7 +14,7 @@ import { auth } from '@/firebase/clientApp'
 import { ProviderId } from '@/types/auth'
 
 export function getLoginPending() {
-  return sessionStorage.getItem(`sns:pendingLogin`) === '"true"'
+  return sessionStorage.getItem('sns:pendingLogin') === 'true'
 }
 
 export function signInWith(providerId: ProviderId) {
