@@ -17,6 +17,18 @@ const nextConfig = {
         permanent: false,
         destination: '/dashboard',
       },
+      {
+        source: '/dashboard',
+        has: [
+          {
+            type: 'cookie',
+            key: 'authorized',
+            value: 'false',
+          },
+        ],
+        permanent: false,
+        destination: '/reg',
+      },
     ]
   },
 }
