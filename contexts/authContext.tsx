@@ -8,7 +8,7 @@ import {
 
 import { onAuthStateChanged } from 'firebase/auth'
 
-import { auth } from '../firebase/clientApp'
+import { auth } from '@/firebase/clientApp'
 
 type AuthContextType = boolean | null
 
@@ -24,9 +24,6 @@ export default function AuthContextComp({ children }: { children: ReactNode }) {
         if (user) {
           setIsAuthenticated(true)
           document.cookie = 'authorized=true'
-          // User is signed in.
-          // You could also look for the user doc in your Firestore (if you have one):
-          // const userDoc = await firebase.firestore().doc(`users/${uid}`).get()
         } else {
           setIsAuthenticated(false)
           document.cookie = 'authorized=false'

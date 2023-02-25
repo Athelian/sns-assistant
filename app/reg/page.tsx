@@ -17,27 +17,28 @@ import {
 } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 
-import {
-  getLoginPending,
-  getProviderFromProviderId,
-  isProviderId,
-  signInWith,
-} from '@/app/reg/helpers'
 import { StyledContainer } from '@/app/styles'
 import withoutSsr from '@/components/noSsrHoc'
 import { auth } from '@/firebase/clientApp'
 import { ProviderId } from '@/types/auth'
+import {
+  getProviderFromProviderId,
+  isProviderId,
+  signInWith,
+} from '@/utils/login'
 
 import { StyledButtonContainer } from './styles'
 
 function Reg() {
   const router = useRouter()
-  const providerToLink = sessionStorage.getItem('providerToLink') // Provider required for linking
+  const providerToLink = sessionStorage.getItem('snai:providerToLink') // Provider required for linking
 
-  const [isLoggingIn, setIsLoggingIn] = useState(getLoginPending())
+  const [isLoggingIn, setIsLoggingIn] = useState(
+    !!sessionStorage.getItem('snai:pendingLogin')
+  )
 
   const handleSignInWith = (providerId: ProviderId) => {
-    sessionStorage.setItem('sns:pendingLogin', 'true')
+    sessionStorage.setItem('snai:pendingLogin', 'true')
     setIsLoggingIn(true)
     signInWith(providerId)
   }
@@ -45,7 +46,7 @@ function Reg() {
     handleSignInWith(GoogleAuthProvider.PROVIDER_ID)
   }
   const handleSignInWithFacebook = () => {
-    signInWith(FacebookAuthProvider.PROVIDER_ID)
+    handleSignInWith(FacebookAuthProvider.PROVIDER_ID)
   }
 
   useEffect(() => {
@@ -59,30 +60,22 @@ function Reg() {
               result.user,
               getProviderFromProviderId(providerToLink)
             )
-            sessionStorage.removeItem('providerToLink')
+            sessionStorage.removeItem('snai:providerToLink')
           } else {
             // ...otherwise call /api/login.
             fetch('/api/login', {
               method: 'POST',
               body: JSON.stringify(result.user),
+            }).then((res) => {
+              if (res.redirected) {
+                router.push(res.url)
+              }
             })
-              .then((res) => {
-                if (res.redirected) {
-                  router.push(res.url)
-                }
-              })
-              .catch(() => {
-                setIsLoggingIn(false)
-              })
-              .finally(() => {
-                sessionStorage.removeItem('sns:pendingLogin')
-              })
           }
+          sessionStorage.removeItem('snai:pendingLogin')
         }
       })
       .catch((error) => {
-        sessionStorage.removeItem('sns:pendingLogin')
-        setIsLoggingIn(false)
         const errorCode = error.code
         if (errorCode === 'auth/account-exists-with-different-credential') {
           const { providerId, verifiedProvider } =
@@ -92,8 +85,11 @@ function Reg() {
               `You have already signed up with ${verifiedProvider[0]} for that email. Would you like to link your account now?`
             )
           ) {
-            sessionStorage.setItem('providerToLink', providerId)
+            sessionStorage.setItem('snai:providerToLink', providerId)
             signInWith(verifiedProvider[0])
+          } else {
+            sessionStorage.removeItem('snai:pendingLogin')
+            setIsLoggingIn(false)
           }
         }
       })

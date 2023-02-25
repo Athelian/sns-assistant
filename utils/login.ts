@@ -1,3 +1,5 @@
+'use client'
+
 import {
   FacebookAuthProvider,
   GoogleAuthProvider,
@@ -9,13 +11,9 @@ import {
   facebookProvider,
   googleProvider,
   twitterProvider,
-} from '@/app/reg/constants'
+} from '@/constants/login'
 import { auth } from '@/firebase/clientApp'
 import { ProviderId } from '@/types/auth'
-
-export function getLoginPending() {
-  return sessionStorage.getItem('sns:pendingLogin') === 'true'
-}
 
 export function signInWith(providerId: ProviderId) {
   return signInWithRedirect(auth, getProviderFromProviderId(providerId))

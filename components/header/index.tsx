@@ -18,12 +18,12 @@ export default function Header() {
   const isRoot = path == '/'
   const isDashboard = path == '/dashboard'
   const isNavigable = path !== '/reg'
-  const pendingLogin = !!sessionStorage.getItem('sns:pendingLogin')
+  const isSessionPendingLogin = !!sessionStorage.getItem('snai:pendingLogin')
 
   return (
     <StyledHeader isRoot={isRoot}>
       <div>
-        {isRoot || pendingLogin ? (
+        {isRoot || isSessionPendingLogin ? (
           <div>{logo}</div>
         ) : (
           <Link href="/">{logo}</Link>
