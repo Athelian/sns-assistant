@@ -1,5 +1,6 @@
-import dynamic from 'next/dynamic'
 import { ReactNode, ReactElement, Fragment, ComponentType } from 'react'
+
+import dynamic from 'next/dynamic'
 
 const NoSsrWrapper = dynamic(
   () =>

@@ -1,6 +1,8 @@
-import { Subtitle } from '@/components/logo/styles'
-import Image from 'next/image'
 import React from 'react'
+
+import Image from 'next/image'
+
+import { Subtitle } from '@/components/logo/styles'
 
 const logo = (
   <>
