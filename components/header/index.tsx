@@ -14,6 +14,7 @@ export default function Header() {
   const isAuthenticated = useAuth()
   const path = usePathname()
   const isRoot = path == '/'
+  const isDashboard = path == '/dashboard'
   const isNavigable = path !== '/reg'
   const pendingLogin = !!sessionStorage.getItem('sns:pendingLogin')
 
@@ -30,7 +31,7 @@ export default function Header() {
             {isAuthenticated !== null &&
               (isAuthenticated ? (
                 <>
-                  <Link href="/">My Account</Link>
+                  {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
                   <span
                     onClick={() => {
                       auth.signOut()
