@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 
 import logo from '@/components/logo'
 import { useAuth } from '@/contexts/authContext'
-import { auth } from '@/firebase/clientApp'
+// import { auth } from '@/firebase/clientApp'
 
 import { Slogan, StyledHeader, StyledNavbar } from './styles'
 
@@ -31,7 +31,7 @@ export default function Header() {
                   {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
                   <span
                     onClick={() => {
-                      auth.signOut()
+                      // auth.signOut()
                       router.push('/')
                     }}
                   >

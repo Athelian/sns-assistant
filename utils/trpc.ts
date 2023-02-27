@@ -1,28 +1,29 @@
-import { httpBatchLink, loggerLink } from '@trpc/client';
-import { createTRPCNext } from '@trpc/next';
-import { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import { NextPageContext } from 'next';
-import superjson from 'superjson';
+import { httpBatchLink, loggerLink } from '@trpc/client'
+import { createTRPCNext } from '@trpc/next'
+import { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
+import { NextPageContext } from 'next'
+import superjson from 'superjson'
+
 // ℹ️ Type-only import:
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
-import type { AppRouter } from '~/server/routers/_app';
+import type { AppRouter } from '@/server/routers/_app'
 
 function getBaseUrl() {
   if (typeof window !== 'undefined') {
-    return '';
+    return ''
   }
   // reference for vercel.com
   if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+    return `https://${process.env.VERCEL_URL}`
   }
 
   // // reference for render.com
   if (process.env.RENDER_INTERNAL_HOSTNAME) {
-    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`
   }
 
   // assume localhost
-  return `http://127.0.0.1:${process.env.PORT ?? 3000}`;
+  return `http://127.0.0.1:${process.env.PORT ?? 3000}`
 }
 
 /**
@@ -37,7 +38,7 @@ export interface SSRContext extends NextPageContext {
    *   utils.ssrContext.status = 404;
    * }
    */
-  status?: number;
+  status?: number
 }
 
 /**
@@ -77,14 +78,14 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
               // This is so you can pass through things like cookies when we're server-side rendering
 
               // If you're using Node 18, omit the "connection" header
-              const { connection: _connection, ...headers } = ctx.req.headers;
+              const { connection: _connection, ...headers } = ctx.req.headers
               return {
                 ...headers,
                 // Optional: inform server that it's an SSR request
                 'x-ssr': '1',
-              };
+              }
             }
-            return {};
+            return {}
           },
         }),
       ],
@@ -92,7 +93,7 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
        * @link https://react-query.tanstack.com/reference/QueryClient
        */
       // queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
-    };
+    }
   },
   /**
    * @link https://trpc.io/docs/ssr
@@ -102,28 +103,28 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
    * Set headers or status code when doing SSR
    */
   responseMeta(opts) {
-    const ctx = opts.ctx as SSRContext;
+    const ctx = opts.ctx as SSRContext
 
     if (ctx.status) {
       // If HTTP status set, propagate that
       return {
         status: ctx.status,
-      };
+      }
     }
 
-    const error = opts.clientErrors[0];
+    const error = opts.clientErrors[0]
     if (error) {
       // Propagate http first error from API calls
       return {
         status: error.data?.httpStatus ?? 500,
-      };
+      }
     }
 
     // for app caching with SSR see https://trpc.io/docs/caching
 
-    return {};
+    return {}
   },
-});
+})
 
-export type RouterInput = inferRouterInputs<AppRouter>;
-export type RouterOutput = inferRouterOutputs<AppRouter>;
+export type RouterInput = inferRouterInputs<AppRouter>
+export type RouterOutput = inferRouterOutputs<AppRouter>
