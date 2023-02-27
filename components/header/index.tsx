@@ -4,15 +4,15 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/navigation'
+import { signIn, signOut, useSession } from 'next-auth/react'
 
 import logo from '@/components/logo'
-import { useAuth } from '@/contexts/authContext'
 // import { auth } from '@/firebase/clientApp'
 
 import { Slogan, StyledHeader, StyledNavbar } from './styles'
 
 export default function Header() {
-  const isAuthenticated = useAuth()
+  const { data: session } = useSession()
   const path = usePathname()
   const router = useRouter()
   const isRoot = path == '/'
@@ -25,25 +25,31 @@ export default function Header() {
         {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
         {isNavigable && (
           <StyledNavbar>
-            {isAuthenticated !== null &&
-              (isAuthenticated ? (
-                <>
-                  {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
-                  <span
-                    onClick={() => {
-                      // auth.signOut()
-                      router.push('/')
-                    }}
-                  >
-                    Logout
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Link href="/reg">Log In</Link>
-                  <Link href="/reg">Sign Up</Link>
-                </>
-              ))}
+            {!!session ? (
+              <>
+                {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
+                <span
+                  onClick={() => {
+                    signOut()
+                    router.push('/')
+                  }}
+                >
+                  Logout
+                </span>
+              </>
+            ) : (
+              <>
+                {/* <Link href="/reg">Log In</Link> */}
+                <span
+                  onClick={() => {
+                    signIn()
+                    router.push('/dashboard')
+                  }}
+                >
+                  Sign Up
+                </span>
+              </>
+            )}
           </StyledNavbar>
         )}
       </div>
