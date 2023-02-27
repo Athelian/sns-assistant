@@ -1,6 +1,6 @@
 'use client'
 import { ThemeProvider } from '@mui/material'
-import { Cabin } from '@next/font/google'
+import { Cabin } from "next/font/google";
 
 import RootStyleRegistry from '@/app/emotion'
 import theme from '@/app/theme'
