@@ -7,9 +7,6 @@ import { useRouter } from 'next/navigation'
 import { signIn, signOut, useSession } from 'next-auth/react'
 
 import logo from '@/components/logo'
-// import { auth } from '@/firebase/clientApp'
-
-import { Slogan, StyledHeader, StyledNavbar } from './styles'
 
 export default function Header() {
   const { data: session } = useSession()
@@ -20,11 +17,15 @@ export default function Header() {
   const isNavigable = path !== '/reg'
 
   return (
-    <StyledHeader isRoot={isRoot}>
-      <div>
+    <header
+      className={`flex justify-between flex-col items-center bg-[#6339a5] text-[white] pt-24 pb-8 px-0 ${
+        isRoot ? 'h-[740px]' : ''
+      }`}
+    >
+      <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0">
         {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
         {isNavigable && (
-          <StyledNavbar>
+          <nav className="[&>*]:text-[white] [&>*]:no-underline [&>*]:mx-4 [&>*]:my-0 [&>*]:hover:text-[#ef86c1] [&>*]:hover:cursor-pointer">
             {!!session ? (
               <>
                 {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
@@ -43,17 +44,20 @@ export default function Header() {
                 <span
                   onClick={() => {
                     signIn()
-                    router.push('/dashboard')
                   }}
                 >
                   Sign Up
                 </span>
               </>
             )}
-          </StyledNavbar>
+          </nav>
         )}
       </div>
-      {isRoot && <Slogan>Install a new marketing team.</Slogan>}
-    </StyledHeader>
+      {isRoot && (
+        <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0 text-[124px]">
+          Install a new marketing team.
+        </div>
+      )}
+    </header>
   )
 }

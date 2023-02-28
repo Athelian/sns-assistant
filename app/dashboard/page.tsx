@@ -1,20 +1,20 @@
 'use client'
 
-import { StyledContainer } from '@/app/styles'
-import withoutSsr from '@/components/noSsrHoc'
+// import { StyledContainer } from '@/app/styles'
+// import withoutSsr from '@/components/noSsrHoc'
 
-function Dashboard() {
-  FB.ui(
-    {
-      method: 'share',
-      href: 'https://developers.facebook.com/docs/',
-    },
-    function (response) {
-      console.log(response)
-    }
-  )
+export default function Dashboard() {
+  // FB.ui(
+  //   {
+  //     method: 'share',
+  //     href: 'https://developers.facebook.com/docs/',
+  //   },
+  //   function (response) {
+  //     console.log(response)
+  //   }
+  // )
 
-  return <StyledContainer>Tweets</StyledContainer>
+  return <div>Tweets</div>
 }
 
-export default withoutSsr(Dashboard)
+// export default withoutSsr(Dashboard)

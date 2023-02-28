@@ -1,15 +1,12 @@
-'use client'
 import Section from '@/components/section'
-
-import { StyledSection } from './styles'
 
 export default function Page() {
   return (
-    <StyledSection>
+    <section>
       {[
         [
           'Elevate your social media presence with artificial intelligence',
-          'Integrate world class machine learning with your business platform to manage your social edia presence. By using SNAI, you are leading the way in the new world of automated marketing.',
+          'Integrate world class machine learning with your business platform to manage your social media presence. By using SNAI, you are leading the way in the new world of automated marketing.',
         ],
         [
           'Turbocharge your engagement with online audiences',
@@ -29,6 +26,6 @@ export default function Page() {
           />
         )
       })}
-    </StyledSection>
+    </section>
   )
 }

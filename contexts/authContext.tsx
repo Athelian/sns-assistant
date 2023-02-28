@@ -1,7 +1,5 @@
 'use client'
 
-import { useContext } from 'react'
-
 import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 
