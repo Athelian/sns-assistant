@@ -16,6 +16,8 @@ export default function Header() {
   const isDashboard = path == '/dashboard'
   const isNavigable = path !== '/reg'
 
+  console.log(process.env)
+
   return (
     <header
       className={`flex justify-between flex-col items-center bg-[#6339a5] text-[white] pt-24 pb-8 px-0 ${
@@ -43,7 +45,9 @@ export default function Header() {
                 {/* <Link href="/reg">Log In</Link> */}
                 <span
                   onClick={() => {
-                    signIn()
+                    signIn(undefined, {
+                      callbackUrl: `${process.env.NEXT_PUBLIC_LOCAL_AUTH_URL}/dashboard`,
+                    })
                   }}
                 >
                   Sign Up

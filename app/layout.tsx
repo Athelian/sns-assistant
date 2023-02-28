@@ -14,7 +14,7 @@ import './globals.css'
 
 async function getSession(cookie: string): Promise<Session> {
   const response = await fetch(
-    `${process.env.LOCAL_AUTH_URL}/api/auth/session`,
+    `${process.env.NEXT_PUBLIC_LOCAL_AUTH_URL}/api/auth/session`,
     {
       headers: {
         cookie,
@@ -35,6 +35,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const session = await getSession(headers().get('cookie') ?? '')
+  console.log('my session', session)
 
   return (
     <html lang="en">
