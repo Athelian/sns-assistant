@@ -5,7 +5,7 @@ export const authOptions: AuthOptions = {
   // Configure one or more authentication providers
   providers: [
     FacebookProvider({
-      clientId: process.env.FACEBOOK_APP_ID,
+      clientId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
     }),
     // ...add more providers here

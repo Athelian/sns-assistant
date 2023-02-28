@@ -1,13 +1,6 @@
-import admin from 'firebase-admin'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Configuration, OpenAIApi } from 'openai'
 import TwitterApi from 'twitter-api-v2'
-
-// OpenAI API init
-admin.initializeApp()
-
-// Database reference
-const dbRef = admin.firestore().doc('tokens/demo')
 
 // Twitter API init
 const twitterClient = new TwitterApi({
@@ -22,8 +15,11 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration)
 
 // STEP 3 - Refresh tokens and post tweets
-exports.tweet = async (_: NextApiRequest, resp: NextApiResponse) => {
-  const snapshotData = (await dbRef.get()).data()
+export default async function handler(
+  _: NextApiRequest,
+  resp: NextApiResponse
+) {
+  const snapshotData = {}
 
   if (snapshotData === undefined) {
     resp.status(400).send('Failed to get snapshot data')
@@ -37,11 +33,6 @@ exports.tweet = async (_: NextApiRequest, resp: NextApiResponse) => {
     accessToken,
     refreshToken: newRefreshToken,
   } = await twitterClient.refreshOAuth2Token(refreshToken)
-
-  await dbRef.set({
-    accessToken,
-    refreshToken: newRefreshToken,
-  })
 
   const nextTweetGeneration = await openai.createCompletion({
     model: 'text-davinci-003',
