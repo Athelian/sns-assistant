@@ -1,20 +1,21 @@
 'use client'
 
 // import { StyledContainer } from '@/app/styles'
-// import withoutSsr from '@/components/noSsrHoc'
 
-export default function Dashboard() {
-  // FB.ui(
-  //   {
-  //     method: 'share',
-  //     href: 'https://developers.facebook.com/docs/',
-  //   },
-  //   function (response) {
-  //     console.log(response)
-  //   }
-  // )
+function Dashboard() {
+  const handleClick = () => {
+    // @see https://developers.facebook.com/docs/sharing/reference/share-dialog/
+    FB.ui({
+      method: 'share',
+      href: 'https://developers.facebook.com/docs/',
+    })
+  }
 
-  return <div>Tweets</div>
+  return (
+    <div>
+      <button onClick={handleClick}>シェアする</button>
+    </div>
+  )
 }
 
-// export default withoutSsr(Dashboard)
+export default Dashboard

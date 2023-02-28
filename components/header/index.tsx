@@ -3,7 +3,6 @@ import React from 'react'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useRouter } from 'next/navigation'
 import { signIn, signOut, useSession } from 'next-auth/react'
 
 import logo from '@/components/logo'
@@ -11,7 +10,6 @@ import logo from '@/components/logo'
 export default function Header() {
   const { data: session } = useSession()
   const path = usePathname()
-  const router = useRouter()
   const isRoot = path == '/'
   const isDashboard = path == '/dashboard'
   const isNavigable = path !== '/reg'
@@ -39,7 +37,15 @@ export default function Header() {
               </>
             ) : (
               <>
-                {/* <Link href="/reg">Log In</Link> */}
+                <span
+                  onClick={() => {
+                    signIn(undefined, {
+                      callbackUrl: `${process.env.NEXT_PUBLIC_LOCAL_AUTH_URL}/dashboard`,
+                    })
+                  }}
+                >
+                  Log In
+                </span>
                 <span
                   onClick={() => {
                     signIn(undefined, {

@@ -1,14 +1,11 @@
-import { ThemeProvider } from '@mui/material'
 import clsx from 'clsx'
 import { Cabin } from 'next/font/google'
 import { headers } from 'next/headers'
 import { Session } from 'next-auth'
 
-import theme from '@/app/theme'
 import Footer from '@/components/footer'
 import Header from '@/components/header'
 import AuthContext from '@/contexts/authContext'
-import FacebookSDK from '@/facebook/sdk'
 
 import './globals.css'
 
@@ -35,14 +32,11 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const session = await getSession(headers().get('cookie') ?? '')
-  console.log('my session', session)
 
   return (
     <html lang="en">
       <head />
       <body>
-        {/* <FacebookSDK /> */}
-        {/* <ThemeProvider theme={theme}> */}
         <AuthContext session={session}>
           <main
             className={clsx(
@@ -55,7 +49,6 @@ export default async function RootLayout({
             <Footer />
           </main>
         </AuthContext>
-        {/* </ThemeProvider> */}
       </body>
     </html>
   )
