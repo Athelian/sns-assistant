@@ -16,8 +16,6 @@ export default function Header() {
   const isDashboard = path == '/dashboard'
   const isNavigable = path !== '/reg'
 
-  console.log(process.env)
-
   return (
     <header
       className={`flex justify-between flex-col items-center bg-[#6339a5] text-[white] pt-24 pb-8 px-0 ${
@@ -33,8 +31,7 @@ export default function Header() {
                 {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
                 <span
                   onClick={() => {
-                    signOut()
-                    router.push('/')
+                    signOut({ callbackUrl: '/' })
                   }}
                 >
                   Logout
