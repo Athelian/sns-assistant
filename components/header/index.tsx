@@ -22,9 +22,9 @@ export default function Header() {
     >
       <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0">
         {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
-        {isNavigable && (
+        {isNavigable && session !== undefined && (
           <nav>
-            {!!session ? (
+            {session !== null ? (
               <>
                 {!isDashboard && (
                   <Link

@@ -31,6 +31,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // undefined === waiting for session fetch to complete
+  // null === user is not authenticated
   const session = await getSession(headers().get('cookie') ?? '')
 
   return (
