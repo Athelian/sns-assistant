@@ -23,11 +23,12 @@ export default function Header() {
       <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0">
         {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
         {isNavigable && (
-          <nav className="[&>*]:text-[white] [&>*]:no-underline [&>*]:mx-4 [&>*]:my-0 [&>*]:hover:text-[#ef86c1] [&>*]:hover:cursor-pointer">
+          <nav>
             {!!session ? (
               <>
                 {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
                 <span
+                  className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
                   onClick={() => {
                     signOut({ callbackUrl: '/' })
                   }}
@@ -38,6 +39,7 @@ export default function Header() {
             ) : (
               <>
                 <span
+                  className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
                   onClick={() => {
                     signIn(undefined, {
                       callbackUrl: `${process.env.NEXT_PUBLIC_LOCAL_AUTH_URL}/dashboard`,
@@ -47,6 +49,7 @@ export default function Header() {
                   Log In
                 </span>
                 <span
+                  className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
                   onClick={() => {
                     signIn(undefined, {
                       callbackUrl: `${process.env.NEXT_PUBLIC_LOCAL_AUTH_URL}/dashboard`,
