@@ -2,13 +2,11 @@ import NextAuth, { AuthOptions } from 'next-auth'
 import FacebookProvider from 'next-auth/providers/facebook'
 
 export const authOptions: AuthOptions = {
-  // Configure one or more authentication providers
   providers: [
     FacebookProvider({
       clientId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
     }),
-    // ...add more providers here
   ],
   callbacks: {
     async jwt({ token, account }) {

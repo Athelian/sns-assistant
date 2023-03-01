@@ -26,7 +26,14 @@ export default function Header() {
           <nav>
             {!!session ? (
               <>
-                {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
+                {!isDashboard && (
+                  <Link
+                    className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
+                    href="/dashboard"
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 <span
                   className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
                   onClick={() => {
