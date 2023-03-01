@@ -1,7 +1,11 @@
 'use client'
 import FacebookSDK from '@/facebook/sdk'
 
-export function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <div>
       <FacebookSDK />
@@ -9,5 +13,3 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     </div>
   )
 }
-
-export default DashboardLayout
