@@ -1,18 +1,17 @@
-'use client'
 import React from 'react'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/router'
 import { signIn, signOut, useSession } from 'next-auth/react'
 
 import logo from '@/components/logo'
 
 export default function Header() {
   const { data: session } = useSession()
-  const path = usePathname()
-  const isRoot = path == '/'
-  const isDashboard = path == '/dashboard'
-  const isNavigable = path !== '/reg'
+  const { asPath } = useRouter()
+  const isRoot = asPath == '/'
+  const isDashboard = asPath == '/dashboard'
+  const isNavigable = asPath !== '/reg'
 
   return (
     <header
@@ -49,7 +48,7 @@ export default function Header() {
                   className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
                   onClick={() => {
                     signIn(undefined, {
-                      callbackUrl: `${process.env.NEXT_PUBLIC_LOCAL_AUTH_URL}/dashboard`,
+                      callbackUrl: '/dashboard',
                     })
                   }}
                 >
@@ -59,7 +58,7 @@ export default function Header() {
                   className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
                   onClick={() => {
                     signIn(undefined, {
-                      callbackUrl: `${process.env.NEXT_PUBLIC_LOCAL_AUTH_URL}/dashboard`,
+                      callbackUrl: `/dashboard`,
                     })
                   }}
                 >

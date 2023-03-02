@@ -1,7 +1,3 @@
-// import { Container, TextContainer } from './styles'
-
-import clsx from 'clsx'
-
 export default function Section({
   variant,
   header,

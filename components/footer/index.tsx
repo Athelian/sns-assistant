@@ -1,5 +1,3 @@
-// import { StyledFooter } from './styles'
-
 export default function Footer() {
   return (
     <footer className="bg-[#6339a5] w-screen flex justify-center text-[revert] text-[white] px-16 py-8">
