@@ -10,8 +10,8 @@ export default function Header() {
   const { data: session } = useSession()
   const { asPath } = useRouter()
   const isRoot = asPath == '/'
-  const isDashboard = asPath == '/dashboard'
-  const isNavigable = asPath !== '/reg'
+  const isDashboard = asPath.startsWith('/dashboard')
+  const isNavigable = !asPath.startsWith('/reg')
 
   return (
     <header
