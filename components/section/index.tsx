@@ -1,5 +1,3 @@
-import { Container, TextContainer } from './styles'
-
 export default function Section({
   variant,
   header,
@@ -10,11 +8,15 @@ export default function Section({
   body: string
 }) {
   return (
-    <Container>
-      <TextContainer variant={variant}>
+    <div className="flex justify-center items-center mx-0 my-32 &[*]:black">
+      <div
+        className={`h-fit max-w-[980px] px-16 py-0 first-letter:uppercase first-letter:font-bold first-letter:text-[86px] first-letter:mr-4 ${
+          variant === 'dark' ? 'first-letter:text-[#ef86c1]' : ''
+        }`}
+      >
         <div>{header}</div>
         <div>{body}</div>
-      </TextContainer>
-    </Container>
+      </div>
+    </div>
   )
 }

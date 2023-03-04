@@ -2,8 +2,6 @@ import React from 'react'
 
 import Image from 'next/image'
 
-import { Subtitle } from '@/components/logo/styles'
-
 const logo = (
   <>
     <Image
@@ -13,7 +11,7 @@ const logo = (
       height={129.2}
       priority
     />
-    <Subtitle>A revolution in social media networking</Subtitle>
+    <div className="min-w-max">A revolution in social media networking</div>
   </>
 )
 

@@ -1,53 +1,79 @@
-'use client'
 import React from 'react'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
+import { signIn, signOut, useSession } from 'next-auth/react'
 
 import logo from '@/components/logo'
-import { useAuth } from '@/contexts/authContext'
-import { auth } from '@/firebase/clientApp'
-
-import { Slogan, StyledHeader, StyledNavbar } from './styles'
 
 export default function Header() {
-  const isAuthenticated = useAuth()
-  const path = usePathname()
-  const router = useRouter()
-  const isRoot = path == '/'
-  const isDashboard = path == '/dashboard'
-  const isNavigable = path !== '/reg'
+  const { data: session } = useSession()
+  const { asPath } = useRouter()
+  const isRoot = asPath == '/'
+  const isDashboard = asPath.startsWith('/dashboard')
+  const isNavigable = !asPath.startsWith('/reg')
 
   return (
-    <StyledHeader isRoot={isRoot}>
-      <div>
+    <header
+      className={`flex justify-between flex-col items-center bg-[#6339a5] text-[white] pt-24 pb-8 px-0 ${
+        isRoot ? 'min-h-[740px]' : ''
+      }`}
+    >
+      <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0">
         {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
-        {isNavigable && (
-          <StyledNavbar>
-            {isAuthenticated !== null &&
-              (isAuthenticated ? (
-                <>
-                  {!isDashboard && <Link href="/dashboard">Dashboard</Link>}
-                  <span
-                    onClick={() => {
-                      auth.signOut()
-                      router.push('/')
-                    }}
+        {isNavigable && session !== undefined && (
+          <nav>
+            {session !== null ? (
+              <>
+                {!isDashboard && (
+                  <Link
+                    className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
+                    href="/dashboard"
                   >
-                    Logout
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Link href="/reg">Log In</Link>
-                  <Link href="/reg">Sign Up</Link>
-                </>
-              ))}
-          </StyledNavbar>
+                    Dashboard
+                  </Link>
+                )}
+                <span
+                  className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
+                  onClick={() => {
+                    signOut({ callbackUrl: '/' })
+                  }}
+                >
+                  Logout
+                </span>
+              </>
+            ) : (
+              <>
+                <span
+                  className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
+                  onClick={() => {
+                    signIn(undefined, {
+                      callbackUrl: '/dashboard',
+                    })
+                  }}
+                >
+                  Log In
+                </span>
+                <span
+                  className="text-[white] no-underline mx-4 my-0 hover:text-[#ef86c1] hover:cursor-pointer"
+                  onClick={() => {
+                    signIn(undefined, {
+                      callbackUrl: `/dashboard`,
+                    })
+                  }}
+                >
+                  Sign Up
+                </span>
+              </>
+            )}
+          </nav>
         )}
       </div>
-      {isRoot && <Slogan>Install a new marketing team.</Slogan>}
-    </StyledHeader>
+      {isRoot && (
+        <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0 text-[124px] leading-normal">
+          Install a new marketing team.
+        </div>
+      )}
+    </header>
   )
 }
