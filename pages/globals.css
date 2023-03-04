@@ -17,6 +17,10 @@ body {
   overflow-x: hidden;
 }
 
+main {
+  font-size: x-large;
+}
+
 a {
   color: white;
   text-decoration: none;

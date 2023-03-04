@@ -16,7 +16,7 @@ export default function Header() {
   return (
     <header
       className={`flex justify-between flex-col items-center bg-[#6339a5] text-[white] pt-24 pb-8 px-0 ${
-        isRoot ? 'h-[740px]' : ''
+        isRoot ? 'min-h-[740px]' : ''
       }`}
     >
       <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0">
@@ -70,7 +70,7 @@ export default function Header() {
         )}
       </div>
       {isRoot && (
-        <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0 text-[124px]">
+        <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0 text-[124px] leading-normal">
           Install a new marketing team.
         </div>
       )}
