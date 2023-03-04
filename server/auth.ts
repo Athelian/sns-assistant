@@ -5,6 +5,7 @@ import {
   type NextAuthOptions,
   type DefaultSession,
 } from 'next-auth'
+import { decode, encode } from 'next-auth/jwt'
 import FacebookProvider from 'next-auth/providers/facebook'
 
 import { env } from '@/env.mjs'
@@ -47,6 +48,11 @@ export const authOptions: NextAuthOptions = {
     },
   },
   adapter: PrismaAdapter(prisma),
+  session: { strategy: 'jwt' },
+  jwt: {
+    encode,
+    decode,
+  },
   providers: [
     FacebookProvider({
       clientId: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
