@@ -28,8 +28,47 @@ const Dashboard: NextPage = () => {
         }
       >
         <Header />
+        <button
+          onClick={() => {
+            FB.login(function (response) {
+              if (response.authResponse) {
+                console.log('Welcome!  Fetching your information.... ')
+                FB.api('/me', function (response) {
+                  console.log('Good to see you, ' + response.name + '.')
+                })
+              } else {
+                console.log('User cancelled login or did not fully authorize.')
+              }
+            })
+          }}
+        >
+          fb login
+        </button>
+        <button
+          onClick={() => {
+            FB.api<'posts'>('/me', { fields: ['posts'] }, (response) => {
+              console.log(response)
+              if (response.posts) {
+                FB.api<'posts'>(response.posts.paging.next, (response) => {
+                  console.log('paginated response', response)
+                  if (response.data) {
+                    FB.api<'posts'>(response.paging.next, (response) => {
+                      console.log('paginated response', response)
+                      if (response.data) {
+                        FB.api<'posts'>(response.paging.next, (response) => {
+                          console.log('paginated response', response)
+                        })
+                      }
+                    })
+                  }
+                })
+              }
+            })
+          }}
+        >
+          get user data
+        </button>
         <div>
-          <FacebookSDK />
           <button onClick={handleClick}>シェアする</button>
         </div>
         <Footer />

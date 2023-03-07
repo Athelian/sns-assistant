@@ -11,6 +11,15 @@ export default function FacebookSDK() {
         xfbml: true,
         version: 'v16.0',
       })
+      // auto authenticate with the api if already logged in with facebook
+      FB.getLoginStatus(({ authResponse }) => {
+        if (authResponse) {
+          console.log(authResponse)
+          // accountService.apiAuthenticate(authResponse.accessToken).then(resolve)
+        } else {
+          // resolve()
+        }
+      })
     }
   }, [])
 
