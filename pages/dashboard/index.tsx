@@ -3,7 +3,6 @@ import Head from 'next/head'
 
 import Footer from '@/components/footer'
 import Header from '@/components/header'
-import FacebookSDK from '@/facebook/sdk'
 
 const Dashboard: NextPage = () => {
   const handleClick = () => {
@@ -45,25 +44,48 @@ const Dashboard: NextPage = () => {
           fb login
         </button>
         <button
-          onClick={() => {
-            FB.api<'posts'>('/me', { fields: ['posts'] }, (response) => {
-              console.log(response)
-              if (response.posts) {
-                FB.api<'posts'>(response.posts.paging.next, (response) => {
-                  console.log('paginated response', response)
-                  if (response.data) {
-                    FB.api<'posts'>(response.paging.next, (response) => {
-                      console.log('paginated response', response)
-                      if (response.data) {
-                        FB.api<'posts'>(response.paging.next, (response) => {
-                          console.log('paginated response', response)
-                        })
-                      }
-                    })
+          onClick={async () => {
+            let allPosts: { id: string; message?: string }[] = []
+            let next: string | void | null = ''
+
+            next = await new Promise<string>((resolve, reject) =>
+              FB.api<'posts{message}'>(
+                '/me',
+                { fields: ['posts{message}'] },
+                (res) => {
+                  if (!res.posts) {
+                    return reject(res)
                   }
-                })
-              }
+                  allPosts = allPosts.concat(res.posts.data)
+                  resolve(res.posts.paging.next)
+                }
+              )
+            ).catch((error) => {
+              console.error(error)
             })
+
+            while (typeof next === 'string') {
+              next = await new Promise<string | null>((resolve, reject) => {
+                if (typeof next === 'string') {
+                  FB.api<{
+                    data: { id: string; message?: string }[]
+                    paging: { next: string; previous: string }
+                  }>(next, (res) => {
+                    if (!res.data) {
+                      return reject(res)
+                    }
+                    if (!res.data.length) {
+                      return resolve(null)
+                    }
+                    allPosts = allPosts.concat(res.data)
+                    resolve(res.paging.next)
+                  })
+                }
+              }).catch((error) => {
+                console.error(error)
+              })
+              console.log(allPosts)
+            }
           }}
         >
           get user data
