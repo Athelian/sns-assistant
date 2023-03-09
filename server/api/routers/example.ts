@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { string, z } from 'zod'
 
 import {
   createTRPCRouter,
@@ -22,4 +22,10 @@ export const exampleRouter = createTRPCRouter({
   getSecretMessage: protectedProcedure.query(() => {
     return 'you can now see this secret message!'
   }),
+
+  writeFacebookMessages: protectedProcedure
+    .input(z.array(z.object({ message: z.string(), id: z.string() })))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.post.createMany({ data: input })
+    }),
 })

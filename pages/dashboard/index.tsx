@@ -3,6 +3,7 @@ import Head from 'next/head'
 
 import Footer from '@/components/footer'
 import Header from '@/components/header'
+import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
   const handleClick = () => {
@@ -12,6 +13,8 @@ const Dashboard: NextPage = () => {
       href: 'https://developers.facebook.com/docs/',
     })
   }
+
+  const writeFacebookMessages = api.example.writeFacebookMessages.useMutation()
 
   return (
     <>
@@ -86,6 +89,12 @@ const Dashboard: NextPage = () => {
               })
               console.log(allPosts)
             }
+            writeFacebookMessages.mutate(
+              allPosts.filter(
+                (post): post is { id: string; message: string } =>
+                  !!post.message
+              )
+            )
           }}
         >
           get user data
