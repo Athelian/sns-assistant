@@ -1,12 +1,14 @@
+import { Prisma } from '@prisma/client'
 import { type NextPage } from 'next'
 import Head from 'next/head'
 
 import Footer from '@/components/footer'
 import Header from '@/components/header'
+import { FacebookPost, FacebookResponse } from '@/types/facebook'
 import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
-  const handleClick = () => {
+  const handleShare = () => {
     // @see https://developers.facebook.com/docs/sharing/reference/share-dialog/
     FB.ui({
       method: 'share',
@@ -14,7 +16,7 @@ const Dashboard: NextPage = () => {
     })
   }
 
-  const writeFacebookMessages = api.example.writeFacebookMessages.useMutation()
+  const { mutate } = api.example.writeFacebookMessages.useMutation()
 
   return (
     <>
@@ -36,7 +38,12 @@ const Dashboard: NextPage = () => {
               if (response.authResponse) {
                 console.log('Welcome!  Fetching your information.... ')
                 FB.api('/me', function (response) {
-                  console.log('Good to see you, ' + response.name + '.')
+                  console.log(
+                    'Good to see you, ' +
+                      (response as { name: string }).name +
+                      '.'
+                  )
+                  console.log(response)
                 })
               } else {
                 console.log('User cancelled login or did not fully authorize.')
@@ -47,61 +54,62 @@ const Dashboard: NextPage = () => {
           fb login
         </button>
         <button
+          onClick={() => {
+            console.log(FB.getAuthResponse())
+          }}
+        >
+          get auth res
+        </button>
+        <button
           onClick={async () => {
-            let allPosts: { id: string; message?: string }[] = []
-            let next: string | void | null = ''
+            let allPosts: Parameters<typeof mutate>[0] = []
 
-            next = await new Promise<string>((resolve, reject) =>
-              FB.api<'posts{message}'>(
-                '/me',
-                { fields: ['posts{message}'] },
-                (res) => {
-                  if (!res.posts) {
-                    return reject(res)
-                  }
-                  allPosts = allPosts.concat(res.posts.data)
-                  resolve(res.posts.paging.next)
-                }
-              )
-            ).catch((error) => {
-              console.error(error)
-            })
+            const fields = ['message', 'created_time'] as const
+            type Post = FacebookPost<(typeof fields)[number]>
+            type Response = FacebookResponse<Post>
+
+            const fbAuthResponse = FB.getAuthResponse()
+            if (!fbAuthResponse) {
+              console.error('User is not authenticated with Facebook')
+              return
+            }
+            const { userID } = fbAuthResponse
+
+            let next: string | null | void = userID + '/posts'
 
             while (typeof next === 'string') {
               next = await new Promise<string | null>((resolve, reject) => {
-                if (typeof next === 'string') {
-                  FB.api<{
-                    data: { id: string; message?: string }[]
-                    paging: { next: string; previous: string }
-                  }>(next, (res) => {
-                    if (!res.data) {
+                if (typeof next !== 'string') return
+                FB.api<{ fields: typeof fields }, Response>(
+                  next,
+                  { fields },
+                  (res) => {
+                    if (!res?.data) {
                       return reject(res)
                     }
-                    if (!res.data.length) {
-                      return resolve(null)
-                    }
-                    allPosts = allPosts.concat(res.data)
-                    resolve(res.paging.next)
-                  })
-                }
+                    allPosts = allPosts.concat(
+                      res.data
+                        .filter(
+                          (post): post is Required<Post> => !!post.message
+                        )
+                        .map(({ id, created_time, ...rest }) => ({
+                          ...rest,
+                          postedAt: created_time,
+                        }))
+                    )
+                    resolve(res.paging?.next ?? null)
+                  }
+                )
               }).catch((error) => {
                 console.error(error)
               })
-              console.log(allPosts)
             }
-            writeFacebookMessages.mutate(
-              allPosts.filter(
-                (post): post is { id: string; message: string } =>
-                  !!post.message
-              )
-            )
+            mutate(allPosts)
           }}
         >
           get user data
         </button>
-        <div>
-          <button onClick={handleClick}>シェアする</button>
-        </div>
+        <button onClick={handleShare}>Share</button>
         <Footer />
       </main>
     </>
