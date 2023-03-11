@@ -28,7 +28,7 @@ export const exampleRouter = createTRPCRouter({
       z.array(
         z.object({
           message: z.string(),
-          postedAt: z.string().or(z.date()),
+          postedAt: z.string().datetime(),
         })
       )
     )
