@@ -27,18 +27,31 @@ export const exampleRouter = createTRPCRouter({
     .input(
       z.array(
         z.object({
+          id: z.string(),
           message: z.string(),
           postedAt: z.string().or(z.date()),
         })
       )
     )
-    .mutation(({ input, ctx }) => {
-      return ctx.prisma.post.createMany({
-        data: input.map(({ postedAt, ...rest }) => ({
-          ...rest,
-          postedAt:
-            typeof postedAt === 'string' ? new Date(postedAt) : postedAt,
-        })),
-      })
+    .mutation(async ({ input, ctx }) => {
+      const posts = await Promise.all(
+        input.map(
+          async ({ id: externalID, message, postedAt }) =>
+            await ctx.prisma.post.upsert({
+              where: { externalID },
+              update: {
+                message,
+              },
+              create: {
+                message,
+                externalID,
+                postedAt:
+                  typeof postedAt === 'string' ? new Date(postedAt) : postedAt,
+              },
+            })
+        )
+      )
+
+      return posts
     }),
 })

@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { type NextPage } from 'next'
 import Head from 'next/head'
 
@@ -92,7 +91,7 @@ const Dashboard: NextPage = () => {
                         .filter(
                           (post): post is Required<Post> => !!post.message
                         )
-                        .map(({ id, created_time, ...rest }) => ({
+                        .map(({ created_time, ...rest }) => ({
                           ...rest,
                           postedAt: created_time,
                         }))
