@@ -8,14 +8,6 @@ import { PageResponse, Post, PostResponse } from '@/types/facebook'
 import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
-  const handleShare = () => {
-    // @see https://developers.facebook.com/docs/sharing/reference/share-dialog/
-    FB.ui({
-      method: 'share',
-      href: 'https://developers.facebook.com/docs/',
-    })
-  }
-
   const { mutate } = api.example.writeFacebookMessages.useMutation()
 
   return (
@@ -38,17 +30,6 @@ const Dashboard: NextPage = () => {
           }}
         >
           get facebook auth status
-        </button>
-        <button
-          onClick={() => {
-            FB.logout(function (response) {
-              if (response.authResponse) {
-                console.log('Welcome!  Fetching your information.... ')
-              }
-            })
-          }}
-        >
-          fb logout
         </button>
         <button
           onClick={() => {
@@ -155,7 +136,6 @@ const Dashboard: NextPage = () => {
         >
           Sync Facebook posts
         </button>
-        <button onClick={handleShare}>Share</button>
         <Footer />
       </main>
     </>
