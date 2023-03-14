@@ -3,7 +3,7 @@ import Head from 'next/head'
 
 import Footer from '@/components/footer'
 import Header from '@/components/header'
-import { FacebookPost, FacebookResponse } from '@/types/facebook'
+import { FacebookPage, FacebookPost, FacebookResponse } from '@/types/facebook'
 import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
@@ -82,9 +82,14 @@ const Dashboard: NextPage = () => {
           onClick={async () => {
             let allPosts: Parameters<typeof mutate>[0] = []
 
-            const fields = ['message', 'created_time'] as const
-            type Post = FacebookPost<(typeof fields)[number]>
-            type Response = FacebookResponse<Post>
+            const PAGE_FIELDS = ['id', 'name', 'access_token'] as const
+            const POST_FIELDS = ['id', 'message', 'created_time'] as const
+
+            type Page = FacebookPage<(typeof PAGE_FIELDS)[number]>
+            type Post = FacebookPost<(typeof POST_FIELDS)[number]>
+
+            type PageResponse = FacebookResponse<Page>
+            type PostResponse = FacebookResponse<Post>
 
             const fbAuthResponse = FB.getAuthResponse()
             if (!fbAuthResponse) {
@@ -93,40 +98,62 @@ const Dashboard: NextPage = () => {
             }
 
             await new Promise((resolve, reject) => {
-              FB.api('me/accounts', async (res) => {
-                console.log(res)
-                Promise.all(
-                  res.data.map((page) => {
-                    return new Promise((resolve, reject) => {
-                      FB.api(
-                        'me/posts',
-                        { access_token: page.access_token },
-                        (res) => {
-                          if (!res) {
-                            reject(res)
-                          }
-                          console.log(res)
-                          allPosts.push(res.data)
-                          resolve(res)
-                        }
-                      )
+              FB.api<{ fields: typeof PAGE_FIELDS }, PageResponse>(
+                'me/accounts',
+                { fields: PAGE_FIELDS },
+                async (res) => {
+                  if (!res) return reject(res)
+                  Promise.all(
+                    res.data.map(
+                      (page) =>
+                        new Promise((resolve, reject) => {
+                          FB.api<
+                            {
+                              access_token: string
+                              fields: typeof POST_FIELDS
+                            },
+                            PostResponse
+                          >(
+                            'me/posts',
+                            {
+                              access_token: page.access_token,
+                              fields: POST_FIELDS,
+                            },
+                            (res) => {
+                              if (!res) return reject(res)
+                              allPosts = allPosts.concat(
+                                res.data
+                                  .filter(
+                                    (post): post is Required<Post> =>
+                                      !!post.message
+                                  )
+                                  .map(
+                                    ({ created_time: postedAt, ...rest }) => ({
+                                      ...rest,
+                                      postedAt,
+                                    })
+                                  )
+                              )
+                              resolve(res)
+                            }
+                          )
+                        })
+                    )
+                  )
+                    .then(() => {
+                      resolve('Success')
                     })
-                  })
-                )
-                  .then(() => {
-                    console.log('Success')
-                    resolve('Success')
-                  })
-                  .catch((e) => {
-                    console.error(e)
-                    reject(e)
-                  })
-              })
+                    .catch((e) => {
+                      console.error(e)
+                      reject(e)
+                    })
+                }
+              )
             }).catch((e) => {
               console.error(e)
             })
 
-            console.log(allPosts)
+            mutate(allPosts)
           }}
         >
           get user data
