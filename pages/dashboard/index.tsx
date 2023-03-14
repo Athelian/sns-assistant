@@ -3,7 +3,8 @@ import Head from 'next/head'
 
 import Footer from '@/components/footer'
 import Header from '@/components/header'
-import { FacebookPage, FacebookPost, FacebookResponse } from '@/types/facebook'
+import { PAGE_FIELDS, POST_FIELDS } from '@/facebook/constants'
+import { PageResponse, Post, PostResponse } from '@/types/facebook'
 import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
@@ -83,12 +84,6 @@ const Dashboard: NextPage = () => {
             })
               .then(async () => {
                 let allPosts: Parameters<typeof mutate>[0] = []
-                const PAGE_FIELDS = ['id', 'name', 'access_token'] as const
-                const POST_FIELDS = ['id', 'message', 'created_time'] as const
-                type Page = FacebookPage<(typeof PAGE_FIELDS)[number]>
-                type Post = FacebookPost<(typeof POST_FIELDS)[number]>
-                type PageResponse = FacebookResponse<Page>
-                type PostResponse = FacebookResponse<Post>
                 const fbAuthResponse = FB.getAuthResponse()
                 if (!fbAuthResponse) {
                   console.error('User is not authenticated with Facebook')
@@ -98,7 +93,7 @@ const Dashboard: NextPage = () => {
                     'me/accounts',
                     { fields: PAGE_FIELDS },
                     (res) => {
-                      if (!res) return reject(res)
+                      if (!res || 'error' in res) return reject(res)
                       Promise.all(
                         res.data.map(
                           (page) =>
@@ -116,7 +111,7 @@ const Dashboard: NextPage = () => {
                                   fields: POST_FIELDS,
                                 },
                                 (res) => {
-                                  if (!res) return reject(res)
+                                  if (!res || 'error' in res) return reject(res)
                                   allPosts = allPosts.concat(
                                     res.data
                                       .filter(
@@ -140,6 +135,7 @@ const Dashboard: NextPage = () => {
                         )
                       )
                         .then(() => {
+                          mutate(allPosts)
                           resolve('Success')
                         })
                         .catch((e) => {
@@ -151,7 +147,6 @@ const Dashboard: NextPage = () => {
                 }).catch((e) => {
                   console.error(e)
                 })
-                mutate(allPosts)
               })
               .catch((e) => {
                 console.error(e)
