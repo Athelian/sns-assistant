@@ -15,9 +15,8 @@ export default function FacebookSDK() {
       FB.getLoginStatus(({ authResponse }) => {
         if (authResponse) {
           console.log(authResponse)
-          // accountService.apiAuthenticate(authResponse.accessToken).then(resolve)
         } else {
-          // resolve()
+          console.log('Not logged in')
         }
       })
     }

@@ -33,32 +33,10 @@ const Dashboard: NextPage = () => {
         <Header />
         <button
           onClick={() => {
-            FB.login(
-              function (response) {
-                if (response.authResponse) {
-                  console.log('Welcome!  Fetching your information.... ')
-                  FB.api('/me', function (response) {
-                    console.log(
-                      'Good to see you, ' +
-                        (response as { name: string }).name +
-                        '.'
-                    )
-                    console.log(response)
-                  })
-                } else {
-                  console.log(
-                    'User cancelled login or did not fully authorize.'
-                  )
-                }
-              },
-              {
-                // @ts-expect-error
-                config_id: '175893815217274', // configuration ID goes here
-              }
-            )
+            console.log(FB.getAuthResponse())
           }}
         >
-          fb login
+          get facebook auth status
         </button>
         <button
           onClick={() => {
@@ -73,90 +51,114 @@ const Dashboard: NextPage = () => {
         </button>
         <button
           onClick={() => {
-            console.log(FB.getAuthResponse())
-          }}
-        >
-          get auth res
-        </button>
-        <button
-          onClick={async () => {
-            let allPosts: Parameters<typeof mutate>[0] = []
-
-            const PAGE_FIELDS = ['id', 'name', 'access_token'] as const
-            const POST_FIELDS = ['id', 'message', 'created_time'] as const
-
-            type Page = FacebookPage<(typeof PAGE_FIELDS)[number]>
-            type Post = FacebookPost<(typeof POST_FIELDS)[number]>
-
-            type PageResponse = FacebookResponse<Page>
-            type PostResponse = FacebookResponse<Post>
-
-            const fbAuthResponse = FB.getAuthResponse()
-            if (!fbAuthResponse) {
-              console.error('User is not authenticated with Facebook')
-              return
-            }
-
-            await new Promise((resolve, reject) => {
-              FB.api<{ fields: typeof PAGE_FIELDS }, PageResponse>(
-                'me/accounts',
-                { fields: PAGE_FIELDS },
-                async (res) => {
-                  if (!res) return reject(res)
-                  Promise.all(
-                    res.data.map(
-                      (page) =>
-                        new Promise((resolve, reject) => {
-                          FB.api<
-                            {
-                              access_token: string
-                              fields: typeof POST_FIELDS
-                            },
-                            PostResponse
-                          >(
-                            'me/posts',
-                            {
-                              access_token: page.access_token,
-                              fields: POST_FIELDS,
-                            },
-                            (res) => {
-                              if (!res) return reject(res)
-                              allPosts = allPosts.concat(
-                                res.data
-                                  .filter(
-                                    (post): post is Required<Post> =>
-                                      !!post.message
-                                  )
-                                  .map(
-                                    ({ created_time: postedAt, ...rest }) => ({
-                                      ...rest,
-                                      postedAt,
-                                    })
-                                  )
-                              )
-                              resolve(res)
-                            }
+            new Promise((resolve, reject) => {
+              FB.getLoginStatus(({ authResponse }) => {
+                if (authResponse) {
+                  resolve(authResponse)
+                } else {
+                  FB.login(
+                    function ({ authResponse }) {
+                      if (authResponse) {
+                        FB.api('/me', function (response) {
+                          console.log(
+                            'Good to see you, ' +
+                              (response as { name: string }).name +
+                              '.'
                           )
+                          resolve(authResponse)
                         })
-                    )
+                      } else {
+                        reject(
+                          'User cancelled login or did not fully authorize.'
+                        )
+                      }
+                    },
+                    {
+                      // @ts-expect-error
+                      config_id: '175893815217274',
+                    }
                   )
-                    .then(() => {
-                      resolve('Success')
-                    })
-                    .catch((e) => {
-                      console.error(e)
-                      reject(e)
-                    })
                 }
-              )
-            }).catch((e) => {
-              console.error(e)
+              })
             })
-
-            mutate(allPosts)
+              .then(async () => {
+                let allPosts: Parameters<typeof mutate>[0] = []
+                const PAGE_FIELDS = ['id', 'name', 'access_token'] as const
+                const POST_FIELDS = ['id', 'message', 'created_time'] as const
+                type Page = FacebookPage<(typeof PAGE_FIELDS)[number]>
+                type Post = FacebookPost<(typeof POST_FIELDS)[number]>
+                type PageResponse = FacebookResponse<Page>
+                type PostResponse = FacebookResponse<Post>
+                const fbAuthResponse = FB.getAuthResponse()
+                if (!fbAuthResponse) {
+                  console.error('User is not authenticated with Facebook')
+                }
+                await new Promise((resolve, reject) => {
+                  FB.api<{ fields: typeof PAGE_FIELDS }, PageResponse>(
+                    'me/accounts',
+                    { fields: PAGE_FIELDS },
+                    (res) => {
+                      if (!res) return reject(res)
+                      Promise.all(
+                        res.data.map(
+                          (page) =>
+                            new Promise((resolve, reject) => {
+                              FB.api<
+                                {
+                                  access_token: string
+                                  fields: typeof POST_FIELDS
+                                },
+                                PostResponse
+                              >(
+                                'me/posts',
+                                {
+                                  access_token: page.access_token,
+                                  fields: POST_FIELDS,
+                                },
+                                (res) => {
+                                  if (!res) return reject(res)
+                                  allPosts = allPosts.concat(
+                                    res.data
+                                      .filter(
+                                        (post): post is Required<Post> =>
+                                          !!post.message
+                                      )
+                                      .map(
+                                        ({
+                                          created_time: postedAt,
+                                          ...rest
+                                        }) => ({
+                                          ...rest,
+                                          postedAt,
+                                        })
+                                      )
+                                  )
+                                  resolve(res)
+                                }
+                              )
+                            })
+                        )
+                      )
+                        .then(() => {
+                          resolve('Success')
+                        })
+                        .catch((e) => {
+                          console.error(e)
+                          reject(e)
+                        })
+                    }
+                  )
+                }).catch((e) => {
+                  console.error(e)
+                })
+                mutate(allPosts)
+              })
+              .catch((e) => {
+                console.error(e)
+              })
           }}
         >
-          get user data
+          Sync Facebook posts
         </button>
         <button onClick={handleShare}>Share</button>
         <Footer />
