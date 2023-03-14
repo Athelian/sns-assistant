@@ -33,24 +33,43 @@ const Dashboard: NextPage = () => {
         <Header />
         <button
           onClick={() => {
-            FB.login(function (response) {
+            FB.login(
+              function (response) {
+                if (response.authResponse) {
+                  console.log('Welcome!  Fetching your information.... ')
+                  FB.api('/me', function (response) {
+                    console.log(
+                      'Good to see you, ' +
+                        (response as { name: string }).name +
+                        '.'
+                    )
+                    console.log(response)
+                  })
+                } else {
+                  console.log(
+                    'User cancelled login or did not fully authorize.'
+                  )
+                }
+              },
+              {
+                // @ts-expect-error
+                config_id: '175893815217274', // configuration ID goes here
+              }
+            )
+          }}
+        >
+          fb login
+        </button>
+        <button
+          onClick={() => {
+            FB.logout(function (response) {
               if (response.authResponse) {
                 console.log('Welcome!  Fetching your information.... ')
-                FB.api('/me', function (response) {
-                  console.log(
-                    'Good to see you, ' +
-                      (response as { name: string }).name +
-                      '.'
-                  )
-                  console.log(response)
-                })
-              } else {
-                console.log('User cancelled login or did not fully authorize.')
               }
             })
           }}
         >
-          fb login
+          fb logout
         </button>
         <button
           onClick={() => {
@@ -72,38 +91,42 @@ const Dashboard: NextPage = () => {
               console.error('User is not authenticated with Facebook')
               return
             }
-            const { userID } = fbAuthResponse
 
-            let next: string | null | void = userID + '/posts'
-
-            while (typeof next === 'string') {
-              next = await new Promise<string | null>((resolve, reject) => {
-                if (typeof next !== 'string') return
-                FB.api<{ fields: typeof fields }, Response>(
-                  next,
-                  { fields },
-                  (res) => {
-                    if (!res?.data) {
-                      return reject(res)
-                    }
-                    allPosts = allPosts.concat(
-                      res.data
-                        .filter(
-                          (post): post is Required<Post> => !!post.message
-                        )
-                        .map(({ created_time, ...rest }) => ({
-                          ...rest,
-                          postedAt: created_time,
-                        }))
-                    )
-                    resolve(res.paging?.next ?? null)
-                  }
+            await new Promise((resolve, reject) => {
+              FB.api('me/accounts', async (res) => {
+                console.log(res)
+                Promise.all(
+                  res.data.map((page) => {
+                    return new Promise((resolve, reject) => {
+                      FB.api(
+                        'me/posts',
+                        { access_token: page.access_token },
+                        (res) => {
+                          if (!res) {
+                            reject(res)
+                          }
+                          console.log(res)
+                          allPosts.push(res.data)
+                          resolve(res)
+                        }
+                      )
+                    })
+                  })
                 )
-              }).catch((error) => {
-                console.error(error)
+                  .then(() => {
+                    console.log('Success')
+                    resolve('Success')
+                  })
+                  .catch((e) => {
+                    console.error(e)
+                    reject(e)
+                  })
               })
-            }
-            mutate(allPosts)
+            }).catch((e) => {
+              console.error(e)
+            })
+
+            console.log(allPosts)
           }}
         >
           get user data

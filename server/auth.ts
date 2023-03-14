@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
   providers: [
     FacebookProvider({
       clientId: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
-      clientSecret: env.FACEBOOK_SECRET,
+      clientSecret: env.FACEBOOK_APP_SECRET,
     }),
     /**
      * ...add more providers here.
