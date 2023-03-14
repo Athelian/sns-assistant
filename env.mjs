@@ -18,7 +18,8 @@ const server = z.object({
     // VERCEL_URL doesn't include `https` so it cant be validated as a URL
     process.env.VERCEL ? z.string().min(1) : z.string().url()
   ),
-  FACEBOOK_SECRET: z.string().min(1),
+  FACEBOOK_APP_SECRET: z.string().min(1),
+  FACEBOOK_BUSINESS_APP_SECRET: z.string().min(1),
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
 })
 
@@ -42,7 +43,8 @@ const processEnv = {
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   NEXT_PUBLIC_FACEBOOK_APP_ID: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
-  FACEBOOK_SECRET: process.env.FACEBOOK_SECRET,
+  FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET,
+  FACEBOOK_BUSINESS_APP_SECRET: process.env.FACEBOOK_BUSINESS_APP_SECRET,
 }
 
 // Don't touch the part below

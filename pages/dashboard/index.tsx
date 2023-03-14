@@ -3,16 +3,12 @@ import Head from 'next/head'
 
 import Footer from '@/components/footer'
 import Header from '@/components/header'
-import FacebookSDK from '@/facebook/sdk'
+import { PAGE_FIELDS, POST_FIELDS } from '@/facebook/constants'
+import { PageResponse, Post, PostResponse } from '@/types/facebook'
+import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
-  const handleClick = () => {
-    // @see https://developers.facebook.com/docs/sharing/reference/share-dialog/
-    FB.ui({
-      method: 'share',
-      href: 'https://developers.facebook.com/docs/',
-    })
-  }
+  const { mutate } = api.example.writeFacebookMessages.useMutation()
 
   return (
     <>
@@ -28,10 +24,118 @@ const Dashboard: NextPage = () => {
         }
       >
         <Header />
-        <div>
-          <FacebookSDK />
-          <button onClick={handleClick}>シェアする</button>
-        </div>
+        <button
+          onClick={() => {
+            console.log(FB.getAuthResponse())
+          }}
+        >
+          get facebook auth status
+        </button>
+        <button
+          onClick={() => {
+            new Promise((resolve, reject) => {
+              FB.getLoginStatus(({ authResponse }) => {
+                if (authResponse) {
+                  resolve(authResponse)
+                } else {
+                  FB.login(
+                    function ({ authResponse }) {
+                      if (authResponse) {
+                        FB.api('/me', function (response) {
+                          console.log(
+                            'Good to see you, ' +
+                              (response as { name: string }).name +
+                              '.'
+                          )
+                          resolve(authResponse)
+                        })
+                      } else {
+                        reject(
+                          'User cancelled login or did not fully authorize.'
+                        )
+                      }
+                    },
+                    {
+                      // @ts-expect-error
+                      config_id: '175893815217274',
+                    }
+                  )
+                }
+              })
+            })
+              .then(async () => {
+                let allPosts: Parameters<typeof mutate>[0] = []
+                const fbAuthResponse = FB.getAuthResponse()
+                if (!fbAuthResponse) {
+                  console.error('User is not authenticated with Facebook')
+                }
+                await new Promise((resolve, reject) => {
+                  FB.api<{ fields: typeof PAGE_FIELDS }, PageResponse>(
+                    'me/accounts',
+                    { fields: PAGE_FIELDS },
+                    (res) => {
+                      if (!res || 'error' in res) return reject(res)
+                      Promise.all(
+                        res.data.map(
+                          (page) =>
+                            new Promise((resolve, reject) => {
+                              FB.api<
+                                {
+                                  access_token: string
+                                  fields: typeof POST_FIELDS
+                                },
+                                PostResponse
+                              >(
+                                'me/posts',
+                                {
+                                  access_token: page.access_token,
+                                  fields: POST_FIELDS,
+                                },
+                                (res) => {
+                                  if (!res || 'error' in res) return reject(res)
+                                  allPosts = allPosts.concat(
+                                    res.data
+                                      .filter(
+                                        (post): post is Required<Post> =>
+                                          !!post.message
+                                      )
+                                      .map(
+                                        ({
+                                          created_time: postedAt,
+                                          ...rest
+                                        }) => ({
+                                          ...rest,
+                                          postedAt,
+                                        })
+                                      )
+                                  )
+                                  resolve(res)
+                                }
+                              )
+                            })
+                        )
+                      )
+                        .then(() => {
+                          mutate(allPosts)
+                          resolve('Success')
+                        })
+                        .catch((e) => {
+                          console.error(e)
+                          reject(e)
+                        })
+                    }
+                  )
+                }).catch((e) => {
+                  console.error(e)
+                })
+              })
+              .catch((e) => {
+                console.error(e)
+              })
+          }}
+        >
+          Sync Facebook posts
+        </button>
         <Footer />
       </main>
     </>

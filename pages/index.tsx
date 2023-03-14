@@ -3,11 +3,8 @@ import { type NextPage } from 'next'
 import Footer from '@/components/footer'
 import Header from '@/components/header'
 import Section from '@/components/section'
-import { api } from '@/utils/api'
 
 const LandingPage: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: 'from tRPC' })
-
   return (
     <>
       <Header />

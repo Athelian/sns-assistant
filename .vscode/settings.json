@@ -10,5 +10,8 @@
   "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
   "[sass]": {
     "editor.defaultFormatter": "syler.sass-indented"
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
   }
 }
