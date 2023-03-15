@@ -5,6 +5,8 @@ import Head from 'next/head'
 import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 
+import Footer from '@/components/footer'
+import Header from '@/components/header'
 import FacebookSDK from '@/facebook/sdk'
 import { api } from '@/utils/api'
 
@@ -33,7 +35,9 @@ const SNAI: AppType<{ session: Session | null }> = ({
             'min-h-screen min-w-max flex flex-col justify-between'
           )}
         >
+          <Header />
           <Component {...pageProps} />
+          <Footer />
         </main>
       </SessionProvider>
     </>
