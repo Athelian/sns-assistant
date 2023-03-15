@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { type NextPage } from 'next'
 import Head from 'next/head'
 
@@ -9,6 +11,8 @@ import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
   const { mutate } = api.example.writeFacebookMessages.useMutation()
+
+  const [syncing, setSyncing] = useState(false)
 
   return (
     <>
@@ -25,7 +29,7 @@ const Dashboard: NextPage = () => {
       >
         <Header />
         <button
-          className="bg-pink-400 self-center text-white p-4 w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg"
+          className="bg-pink-400 self-center text-white p-4 w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg relative"
           onClick={() => {
             console.log(FB.getAuthResponse())
           }}
@@ -33,8 +37,9 @@ const Dashboard: NextPage = () => {
           print fb auth status
         </button>
         <button
-          className="bg-pink-400 self-center text-white p-4 w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg"
+          className="bg-pink-400 self-center text-white w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg relative"
           onClick={() => {
+            setSyncing(true)
             new Promise((resolve, reject) => {
               FB.getLoginStatus(({ authResponse }) => {
                 if (authResponse) {
@@ -134,9 +139,22 @@ const Dashboard: NextPage = () => {
               .catch((e) => {
                 console.error(e)
               })
+              .finally(() => {
+                setSyncing(false)
+              })
           }}
         >
-          Sync Facebook posts
+          {syncing && (
+            <div className="bg-[#B05082] w-full h-full absolute rounded-lg">
+              <div className="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          )}
+          <div className="p-4">Sync FB posts</div>
         </button>
         <Footer />
       </main>
