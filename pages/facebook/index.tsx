@@ -14,14 +14,6 @@ const Dashboard: NextPage = () => {
   return (
     <>
       <button
-        className="bg-pink-400 self-center text-white p-4 w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg relative"
-        onClick={() => {
-          console.log(FB.getAuthResponse())
-        }}
-      >
-        print fb auth status
-      </button>
-      <button
         className="bg-pink-400 self-center text-white w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg relative"
         onClick={() => {
           setSyncing(true)
@@ -139,6 +131,16 @@ const Dashboard: NextPage = () => {
         )}
         <div className="p-4">Sync FB posts</div>
       </button>
+      {process.env.NODE_ENV === 'development' && (
+        <button
+          className="bg-pink-400 self-center text-white p-4 w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg relative"
+          onClick={() => {
+            console.log(FB.getAuthResponse())
+          }}
+        >
+          print fb auth status
+        </button>
+      )}
     </>
   )
 }
