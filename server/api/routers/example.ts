@@ -15,15 +15,13 @@ export const exampleRouter = createTRPCRouter({
       }
     }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany()
+  getFacebookPosts: protectedProcedure.query(async ({ ctx }) => {
+    const posts = await ctx.prisma.post.findMany()
+
+    return posts
   }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return 'you can now see this secret message!'
-  }),
-
-  writeFacebookMessages: protectedProcedure
+  setFacebookPosts: protectedProcedure
     .input(
       z.array(
         z.object({
