@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Image from 'next/image'
 
 import SnaiLogo from '@/public/snai-high-resolution-logo-color-on-transparent-background.png'

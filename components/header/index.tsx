@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signIn, signOut, useSession } from 'next-auth/react'
@@ -15,11 +13,11 @@ export default function Header() {
 
   return (
     <header
-      className={`flex justify-between flex-col items-center bg-[#6339a5] text-[white] pt-24 pb-8 px-0 ${
+      className={`flex justify-between flex-col items-center bg-[#6339a5] text-[white] pt-24 pb-8 ${
         isRoot ? 'min-h-[740px]' : ''
       }`}
     >
-      <div className="h-fit relative max-w-[980px] z-[2] w-[stretch] flex items-end justify-between px-7 py-0">
+      <div className="flex h-fit relative z-[2] w-[stretch] items-end justify-between">
         {isRoot ? <div>{logo}</div> : <Link href="/">{logo}</Link>}
         {isNavigable && session !== undefined && (
           <nav>

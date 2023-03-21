@@ -2,8 +2,9 @@ import { useState } from 'react'
 
 import { type NextPage } from 'next'
 
+import FacebookPost from '@/facebook/components/post'
 import { PAGE_FIELDS, POST_FIELDS } from '@/facebook/constants'
-import { PageResponse, Post, PostResponse } from '@/types/facebook'
+import type { PageResponse, Post, PostResponse } from '@/types/facebook'
 import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
@@ -13,8 +14,7 @@ const Dashboard: NextPage = () => {
   const [syncing, setSyncing] = useState(false)
 
   return (
-    <>
-      {posts.map((post) => post.message)}
+    <section className="flex-col">
       <button
         className="bg-pink-400 self-center text-white w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg relative"
         onClick={() => {
@@ -143,7 +143,10 @@ const Dashboard: NextPage = () => {
           print fb auth status
         </button>
       )}
-    </>
+      {posts.map((post) => (
+        <FacebookPost key={post.id} post={post} />
+      ))}
+    </section>
   )
 }
 

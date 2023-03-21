@@ -21,6 +21,19 @@ main {
   font-size: x-large;
 }
 
+main > header > div,
+main > footer > div {
+  max-width: 980px;
+  padding: 0 1.75rem;
+}
+main > section {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  max-width: 980px;
+  padding: 0 1.75rem;
+}
+
 a {
   color: white;
   text-decoration: none;

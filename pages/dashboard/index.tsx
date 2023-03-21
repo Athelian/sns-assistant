@@ -5,19 +5,17 @@ import Link from 'next/link'
 
 const Dashboard: NextPage = () => {
   return (
-    <section className="flex justify-center">
-      <div className="flex gap-8 w-full justify-around px-7 max-w-[980px]">
-        <Link className="w-1/3 min-w-[260px]" href="/facebook">
-          <FontAwesomeIcon
-            className="text-[#3B5998] hover:text-gray-500"
-            icon={faFacebook}
-          />
-        </Link>
+    <section className="gap-8 w-full justify-around py-7">
+      <Link className="w-1/3 min-w-[260px]" href="/facebook">
         <FontAwesomeIcon
-          className="w-1/3 min-w-[260px] text-gray-500"
-          icon={faTwitter}
+          className="text-[#3B5998] hover:text-gray-500"
+          icon={faFacebook}
         />
-      </div>
+      </Link>
+      <FontAwesomeIcon
+        className="w-1/3 min-w-[260px] text-gray-500"
+        icon={faTwitter}
+      />
     </section>
   )
 }
