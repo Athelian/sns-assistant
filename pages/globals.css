@@ -30,8 +30,8 @@ main > section {
   display: flex;
   justify-content: center;
   align-self: center;
-  max-width: 980px;
-  padding: 0 1.75rem;
+  width: 980px;
+  padding: 3.5rem;
 }
 
 a {

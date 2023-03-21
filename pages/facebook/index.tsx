@@ -14,7 +14,7 @@ const Dashboard: NextPage = () => {
   const [syncing, setSyncing] = useState(false)
 
   return (
-    <section className="flex-col">
+    <section className="flex-col gap-8">
       <button
         className="bg-pink-400 self-center text-white w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg relative"
         onClick={() => {
@@ -131,7 +131,7 @@ const Dashboard: NextPage = () => {
             </div>
           </div>
         )}
-        <div className="p-4">Sync FB posts</div>
+        <div className="p-4">Sync ↺</div>
       </button>
       {process.env.NODE_ENV === 'development' && (
         <button
@@ -139,6 +139,7 @@ const Dashboard: NextPage = () => {
           onClick={() => {
             console.log(FB.getAuthResponse())
           }}
+          style={{ display: 'none' }}
         >
           print fb auth status
         </button>

@@ -8,7 +8,7 @@ export default function Section({
   body: string
 }) {
   return (
-    <div className="flex justify-center items-center px-8 mx-0 my-32 &[*]:black">
+    <div className="flex justify-center items-center mx-0 my-32 &[*]:black">
       <div
         className={`h-fit max-w-[980px] first-letter:uppercase first-letter:font-bold first-letter:text-[86px] first-letter:mr-4 ${
           variant === 'dark' ? 'first-letter:text-[#ef86c1]' : ''
