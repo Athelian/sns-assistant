@@ -8,6 +8,7 @@ import type { PageResponse, Post, PostResponse } from '@/types/facebook'
 import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
+  const utils = api.useContext()
   const { mutate } = api.example.setFacebookPosts.useMutation()
   const { data: posts = [] } = api.example.getFacebookPosts.useQuery()
 
@@ -102,6 +103,11 @@ const Dashboard: NextPage = () => {
                       .then(() => {
                         mutate(allPosts)
                         resolve('Success')
+                        mutate(allPosts, {
+                          onSuccess: () => {
+                            utils.example.getFacebookPosts.invalidate()
+                          },
+                        })
                       })
                       .catch((e) => {
                         console.error(e)
