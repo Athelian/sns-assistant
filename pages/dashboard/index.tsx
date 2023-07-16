@@ -10,11 +10,13 @@ const Dashboard: NextPage = () => {
         <FontAwesomeIcon
           className="text-[#3B5998] hover:text-gray-500"
           icon={faFacebook}
+          size="10x"
         />
       </Link>
       <FontAwesomeIcon
         className="w-1/3 min-w-[260px] text-gray-500"
         icon={faTwitter}
+        size="10x"
       />
     </section>
   )
