@@ -1,3 +1,5 @@
+import type { Post, PrismaClient } from '@prisma/client'
+import { Configuration, OpenAIApi } from 'openai'
 import { z } from 'zod'
 
 import {
@@ -6,21 +8,43 @@ import {
   protectedProcedure,
 } from '@/server/api/trpc'
 
-export const exampleRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+})
+const openai = new OpenAIApi(configuration)
+
+const getFacebookPosts = ({ prisma }: { prisma: PrismaClient }) => {
+  return prisma.post.findMany({
+    orderBy: { postedAt: 'desc' },
+  })
+}
+
+export const router = createTRPCRouter({
+  generateFacebookPost: protectedProcedure.query(
+    async ({ ctx: { prisma } }) => {
+      const posts = await getFacebookPosts({ prisma })
+      try {
+        const completion = await openai.createCompletion({
+          model: 'text-davinci-002',
+          prompt: generatePrompt(posts),
+          temperature: 0.6,
+        })
+        return { result: completion.data.choices[0].text }
+      } catch (error: unknown) {
+        // Consider adjusting the error handling logic for your use case
+        if (error instanceof Error) {
+          console.error(`Error with OpenAI API request: ${error.message}`)
+          return {
+            error,
+            result: error.message,
+          }
+        }
       }
-    }),
+    }
+  ),
 
-  getFacebookPosts: protectedProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.prisma.post.findMany({
-      orderBy: { postedAt: 'desc' },
-    })
-
-    return posts
+  getFacebookPosts: protectedProcedure.query(async ({ ctx: { prisma } }) => {
+    return await getFacebookPosts({ prisma })
   }),
 
   setFacebookPosts: protectedProcedure
@@ -55,3 +79,12 @@ export const exampleRouter = createTRPCRouter({
       return posts
     }),
 })
+
+function generatePrompt(posts: Post[]) {
+  return `The following is a series of Facebook on the user's account. Generate a supplementary post
+based on the content of the posts.
+
+${posts.map((post, i) => `${i}: ${post.message}`).join('\n\n')}
+
+`
+}

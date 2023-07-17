@@ -9,8 +9,17 @@ import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
   const utils = api.useContext()
-  const { mutate } = api.example.setFacebookPosts.useMutation()
-  const { data: posts = [] } = api.example.getFacebookPosts.useQuery()
+  const { mutate } = api.router.setFacebookPosts.useMutation()
+  const { data: posts = [] } = api.router.getFacebookPosts.useQuery()
+
+  const [desireGeneratedPost, setDesireGeneratedPost] = useState(false)
+
+  api.router.generateFacebookPost.useQuery(undefined, {
+    onSuccess: (res) => {
+      console.log(res)
+    },
+    enabled: desireGeneratedPost,
+  })
 
   const [syncing, setSyncing] = useState(false)
 
@@ -105,7 +114,7 @@ const Dashboard: NextPage = () => {
                         resolve('Success')
                         mutate(allPosts, {
                           onSuccess: () => {
-                            utils.example.getFacebookPosts.invalidate()
+                            utils.router.getFacebookPosts.invalidate()
                           },
                         })
                       })
@@ -153,6 +162,14 @@ const Dashboard: NextPage = () => {
       {posts.map((post) => (
         <FacebookPost key={post.id} post={post} />
       ))}
+      <button
+        className="absolute right-0 bottom-0 bg-pink-400 self-center p-4 m-8 mb-14 text-white w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg"
+        onClick={() => {
+          setDesireGeneratedPost(true)
+        }}
+      >
+        Generate 🤔
+      </button>
     </section>
   )
 }
