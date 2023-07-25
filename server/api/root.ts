@@ -1,4 +1,4 @@
-import { router } from '@/server/api/routers/example'
+import { router } from '@/server/api/routers/router'
 import { createTRPCRouter } from '@/server/api/trpc'
 
 /**

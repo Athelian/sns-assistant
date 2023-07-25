@@ -2,6 +2,14 @@ import { useState } from 'react'
 
 import { type NextPage } from 'next'
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import FacebookPost from '@/facebook/components/post'
 import { PAGE_FIELDS, POST_FIELDS } from '@/facebook/constants'
 import type { PageResponse, Post, PostResponse } from '@/types/facebook'
@@ -12,11 +20,15 @@ const Dashboard: NextPage = () => {
   const { mutate } = api.router.setFacebookPosts.useMutation()
   const { data: posts = [] } = api.router.getFacebookPosts.useQuery()
 
-  const [desireGeneratedPost, setDesireGeneratedPost] = useState(false)
+  const [desireGeneratedPost, setDesireGeneratedPost] = useState<boolean>(false)
+  const [generatedPost, setGeneratedPost] = useState<string | null>(null)
 
   api.router.generateFacebookPost.useQuery(undefined, {
     onSuccess: (res) => {
-      console.log(res)
+      setDesireGeneratedPost(false)
+      if (res) {
+        setGeneratedPost(res)
+      }
     },
     enabled: desireGeneratedPost,
   })
@@ -170,6 +182,29 @@ const Dashboard: NextPage = () => {
       >
         Generate 🤔
       </button>
+      <Dialog
+        open={!!generatedPost}
+        onOpenChange={() => {
+          setGeneratedPost(null)
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px] w-max rounded-lg">
+          <DialogHeader>
+            <DialogTitle>Generated post 🔎</DialogTitle>
+          </DialogHeader>
+          {generatedPost}
+          <DialogFooter>
+            <button
+              type="submit"
+              onClick={() => {
+                setGeneratedPost(null)
+              }}
+            >
+              Save
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }
