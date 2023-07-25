@@ -66,8 +66,8 @@ model VerificationToken {
 }
 
 model Post {
-    id         String @id @default(uuid())
-    externalID String @unique
+    id         String  @id @default(uuid())
+    externalID String? @unique
     message    String
 
     // To return `Date`s intact through the API we use transformers

@@ -56,7 +56,7 @@ CREATE TABLE "VerificationToken" (
 -- CreateTable
 CREATE TABLE "Post" (
     "id" TEXT NOT NULL,
-    "externalID" TEXT NOT NULL,
+    "externalID" TEXT,
     "message" TEXT NOT NULL,
     "postedAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

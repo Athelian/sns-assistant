@@ -75,6 +75,19 @@ export const router = createTRPCRouter({
 
       return posts
     }),
+
+  createFacebookPost: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const post = await ctx.prisma.post.create({
+        data: {
+          message: input,
+          externalID: null,
+          postedAt: new Date(),
+        },
+      })
+      return post
+    }),
 })
 
 function generatePrompt(posts: Post[]) {

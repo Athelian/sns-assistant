@@ -5,7 +5,6 @@ import { type NextPage } from 'next'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -17,7 +16,8 @@ import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
   const utils = api.useContext()
-  const { mutate } = api.router.setFacebookPosts.useMutation()
+  const { mutate: savePosts } = api.router.setFacebookPosts.useMutation()
+  const { mutate: createPost } = api.router.createFacebookPost.useMutation()
   const { data: posts = [] } = api.router.getFacebookPosts.useQuery()
 
   const [desireGeneratedPost, setDesireGeneratedPost] = useState<boolean>(false)
@@ -70,7 +70,7 @@ const Dashboard: NextPage = () => {
             })
           })
             .then(async () => {
-              let allPosts: Parameters<typeof mutate>[0] = []
+              let allPosts: Parameters<typeof savePosts>[0] = []
               const fbAuthResponse = FB.getAuthResponse()
               if (!fbAuthResponse) {
                 console.error('User is not authenticated with Facebook')
@@ -122,9 +122,9 @@ const Dashboard: NextPage = () => {
                       )
                     )
                       .then(() => {
-                        mutate(allPosts)
+                        savePosts(allPosts)
                         resolve('Success')
-                        mutate(allPosts, {
+                        savePosts(allPosts, {
                           onSuccess: () => {
                             utils.router.getFacebookPosts.invalidate()
                           },
@@ -174,14 +174,16 @@ const Dashboard: NextPage = () => {
       {posts.map((post) => (
         <FacebookPost key={post.id} post={post} />
       ))}
-      <button
-        className="absolute right-0 bottom-0 bg-pink-400 self-center p-4 m-8 mb-14 text-white w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg"
-        onClick={() => {
-          setDesireGeneratedPost(true)
-        }}
-      >
-        Generate 🤔
-      </button>
+      {!!posts.length && (
+        <button
+          className="absolute right-0 bottom-0 bg-pink-400 self-center p-4 m-8 mb-14 text-white w-max rounded-lg hover:bg-[#B05082] hover:shadow-lg"
+          onClick={() => {
+            setDesireGeneratedPost(true)
+          }}
+        >
+          Generate 🤔
+        </button>
+      )}
       <Dialog
         open={!!generatedPost}
         onOpenChange={() => {
@@ -197,6 +199,14 @@ const Dashboard: NextPage = () => {
             <button
               type="submit"
               onClick={() => {
+                if (!generatedPost) return
+                // TODO: Create using generated post (when generated posts have meaningful content)
+                createPost(Date(), {
+                  onSuccess: () => {
+                    utils.router.getFacebookPosts.invalidate()
+                  },
+                })
+
                 setGeneratedPost(null)
               }}
             >
