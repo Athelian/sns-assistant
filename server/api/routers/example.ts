@@ -29,15 +29,12 @@ export const router = createTRPCRouter({
           prompt: generatePrompt(posts),
           temperature: 0.6,
         })
-        return { result: completion.data.choices[0].text }
+        return completion.data.choices[0].text
       } catch (error: unknown) {
-        // Consider adjusting the error handling logic for your use case
+        // TODO: Throw TRPC error
         if (error instanceof Error) {
           console.error(`Error with OpenAI API request: ${error.message}`)
-          return {
-            error,
-            result: error.message,
-          }
+          return error.message
         }
       }
     }
