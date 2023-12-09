@@ -16,6 +16,7 @@ import { api } from '@/utils/api'
 
 const Dashboard: NextPage = () => {
   const utils = api.useContext()
+  const { mutate: initUser } = api.router.initFacebookUser.useMutation()
   const { mutate: savePosts } = api.router.setFacebookPosts.useMutation()
   const { mutate: createPost } = api.router.createFacebookPost.useMutation()
   const { data: posts = [] } = api.router.getFacebookPosts.useQuery()
@@ -49,6 +50,10 @@ const Dashboard: NextPage = () => {
                 FB.login(
                   function ({ authResponse }) {
                     if (authResponse) {
+                      initUser({
+                        id: authResponse.userID,
+                        userAccessToken: authResponse.accessToken,
+                      })
                       FB.api('/me', function (response) {
                         console.log(
                           'Good to see you, ' +

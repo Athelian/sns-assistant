@@ -1,12 +1,10 @@
+import https from 'https'
+
 import type { Post, PrismaClient } from '@prisma/client'
 import { Configuration, OpenAIApi } from 'openai'
 import { z } from 'zod'
 
-import {
-  createTRPCRouter,
-  publicProcedure,
-  protectedProcedure,
-} from '@/server/api/trpc'
+import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -19,7 +17,23 @@ const getFacebookPosts = ({ prisma }: { prisma: PrismaClient }) => {
   })
 }
 
+// TODO: Split router based on provider
 export const router = createTRPCRouter({
+  initFacebookUser: protectedProcedure
+    .input(z.object({ id: z.string(), userAccessToken: z.string() }))
+    .mutation(async ({ input }) => {
+      https.get(
+        `https://graph.facebook.com/oauth/access_token?grant_type=
+        fb_exchange_token&client_id=${process.env.NEXT_PUBLIC_FACEBOOK_BUSINESS_APP_ID}&client_secret=
+        ${process.env.FACEBOOK_BUSINESS_APP_SECRET}&fb_exchange_token=${input.userAccessToken}`,
+        (res) => {
+          res.on('data', (d: Uint8Array) => {
+            console.log(d.toString())
+          })
+        }
+      )
+    }),
+
   generateFacebookPost: protectedProcedure.query(
     async ({ ctx: { prisma } }) => {
       const posts = await getFacebookPosts({ prisma })
@@ -86,6 +100,7 @@ export const router = createTRPCRouter({
           postedAt: new Date(),
         },
       })
+      // TODO: Publish to Facebook
       return post
     }),
 })
