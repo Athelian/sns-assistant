@@ -23,9 +23,7 @@ export const router = createTRPCRouter({
     .input(z.object({ id: z.string(), userAccessToken: z.string() }))
     .mutation(async ({ input }) => {
       https.get(
-        `https://graph.facebook.com/oauth/access_token?grant_type=
-        fb_exchange_token&client_id=${process.env.NEXT_PUBLIC_FACEBOOK_BUSINESS_APP_ID}&client_secret=
-        ${process.env.FACEBOOK_BUSINESS_APP_SECRET}&fb_exchange_token=${input.userAccessToken}`,
+        `https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.NEXT_PUBLIC_FACEBOOK_BUSINESS_APP_ID}&client_secret=${process.env.FACEBOOK_BUSINESS_APP_SECRET}&fb_exchange_token=${input.userAccessToken}`,
         (res) => {
           res.on('data', (d: Uint8Array) => {
             console.log(d.toString())
