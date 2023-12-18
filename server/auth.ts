@@ -20,7 +20,7 @@ import { prisma } from '@/server/db'
 declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
-      id: string
+      id?: string
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user']
@@ -59,6 +59,15 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  callbacks: {
+    session: ({ session, token }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: token.sub,
+      },
+    }),
+  },
   secret: process.env.NEXTAUTH_SECRET,
 }
 

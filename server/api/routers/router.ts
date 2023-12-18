@@ -20,13 +20,53 @@ const getFacebookPosts = ({ prisma }: { prisma: PrismaClient }) => {
 // TODO: Split router based on provider
 export const router = createTRPCRouter({
   initFacebookUser: protectedProcedure
-    .input(z.object({ id: z.string(), userAccessToken: z.string() }))
-    .mutation(async ({ input }) => {
+    .input(
+      z.object({ providerAccountId: z.string(), userAccessToken: z.string() })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { providerAccountId } = input
       https.get(
         `https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.NEXT_PUBLIC_FACEBOOK_BUSINESS_APP_ID}&client_secret=${process.env.FACEBOOK_BUSINESS_APP_SECRET}&fb_exchange_token=${input.userAccessToken}`,
         (res) => {
-          res.on('data', (d: Uint8Array) => {
-            console.log(d.toString())
+          res.on('data', async (d: Uint8Array) => {
+            const res = JSON.parse(d.toString())
+            if (!res.access_token) {
+              throw new Error('No access token')
+            }
+            if (ctx.session.user.id) {
+              const { access_token: userAccessToken } = res
+              const account = await ctx.prisma.account.findUnique({
+                where: {
+                  provider_providerAccountId: {
+                    providerAccountId: providerAccountId,
+                    provider: 'facebook',
+                  },
+                },
+              })
+              if (!account) {
+                await ctx.prisma.account.create({
+                  data: {
+                    user: { connect: { id: ctx.session.user.id } },
+                    type: 'oauth',
+                    provider: 'facebook',
+                    providerAccountId: providerAccountId,
+                    long_lived_access_token: userAccessToken,
+                  },
+                })
+              } else {
+                ctx.prisma.account.update({
+                  where: {
+                    provider_providerAccountId: {
+                      providerAccountId: providerAccountId,
+                      provider: 'facebook',
+                    },
+                  },
+                  data: {
+                    long_lived_access_token: userAccessToken,
+                  },
+                })
+              }
+            }
           })
         }
       )

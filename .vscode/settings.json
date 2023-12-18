@@ -7,7 +7,9 @@
   "eslint.workingDirectories": ["."],
   "typescript.tsdk": "node_modules/.pnpm/typescript@4.9.5/node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
   "[sass]": {
     "editor.defaultFormatter": "syler.sass-indented"
   },

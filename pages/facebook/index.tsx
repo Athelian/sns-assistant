@@ -51,7 +51,7 @@ const Dashboard: NextPage = () => {
                   function ({ authResponse }) {
                     if (authResponse) {
                       initUser({
-                        id: authResponse.userID,
+                        providerAccountId: authResponse.userID,
                         userAccessToken: authResponse.accessToken,
                       })
                       FB.api('/me', function (response) {
