@@ -44,7 +44,7 @@ export const router = createTRPCRouter({
                 },
               })
               if (!account) {
-                await ctx.prisma.account.create({
+                ctx.prisma.account.create({
                   data: {
                     user: { connect: { id: ctx.session.user.id } },
                     type: 'oauth',
