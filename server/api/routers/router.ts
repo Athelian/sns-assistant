@@ -35,37 +35,24 @@ export const router = createTRPCRouter({
             }
             if (ctx.session.user.id) {
               const { access_token: userAccessToken } = res
-              const account = await ctx.prisma.account.findUnique({
+              ctx.prisma.account.upsert({
                 where: {
                   provider_providerAccountId: {
                     providerAccountId: providerAccountId,
                     provider: 'facebook',
                   },
                 },
+                update: {
+                  long_lived_access_token: userAccessToken,
+                },
+                create: {
+                  user: { connect: { id: ctx.session.user.id } },
+                  type: 'oauth',
+                  provider: 'facebook',
+                  providerAccountId: providerAccountId,
+                  long_lived_access_token: userAccessToken,
+                },
               })
-              if (!account) {
-                ctx.prisma.account.create({
-                  data: {
-                    user: { connect: { id: ctx.session.user.id } },
-                    type: 'oauth',
-                    provider: 'facebook',
-                    providerAccountId: providerAccountId,
-                    long_lived_access_token: userAccessToken,
-                  },
-                })
-              } else {
-                ctx.prisma.account.update({
-                  where: {
-                    provider_providerAccountId: {
-                      providerAccountId: providerAccountId,
-                      provider: 'facebook',
-                    },
-                  },
-                  data: {
-                    long_lived_access_token: userAccessToken,
-                  },
-                })
-              }
             }
           })
         }
@@ -101,6 +88,7 @@ export const router = createTRPCRouter({
       z.array(
         z.object({
           id: z.string(),
+          accountId: z.string(),
           message: z.string(),
           postedAt: z.string().or(z.date()),
         })
@@ -109,7 +97,7 @@ export const router = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const posts = await Promise.all(
         input.map(
-          async ({ id: externalID, message, postedAt }) =>
+          async ({ id: externalID, accountId, message, postedAt }) =>
             await ctx.prisma.post.upsert({
               where: { externalID },
               update: {
@@ -117,6 +105,7 @@ export const router = createTRPCRouter({
               },
               create: {
                 message,
+                accountId,
                 externalID,
                 postedAt:
                   typeof postedAt === 'string' ? new Date(postedAt) : postedAt,
@@ -135,6 +124,7 @@ export const router = createTRPCRouter({
         data: {
           message: input,
           externalID: null,
+          accountID: null,
           postedAt: new Date(),
         },
       })
